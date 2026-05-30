@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barricades &amp; Capital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SCREEN: MENU -->
+<div id="screen-menu" class="screen active">
+  <div class="menu-bg">
+    <img src="img/menu-bg.png" alt="" class="menu-bg-img" onerror="this.style.display='none'">
+  </div>
+  <div class="menu-content">
+    <div class="menu-title">
+      <span class="title-red">BARRICADES</span>
+      <span class="title-amp">&amp;</span>
+      <span class="title-gold">CAPITAL</span>
+    </div>
+    <p class="menu-subtitle">Một trò chơi về xung đột giai cấp và quyền lực</p>
+    <button class="btn-primary" onclick="Game.startFactionSelect()">BẮT ĐẦU</button>
+    <p class="menu-note">7 ngày · 5–10 phút · Chạy trên trình duyệt</p>
+  </div>
+</div>
+
+<!-- SCREEN: FACTION SELECT -->
+<div id="screen-faction" class="screen">
+  <div class="faction-header">
+    <h2>Chọn Phe Của Bạn</h2>
+    <p>Mỗi phe có điểm mạnh, điểm yếu và mục tiêu phòng thủ riêng.</p>
+  </div>
+  <div class="faction-cards">
+    <div class="faction-card" id="card-proletariat" onclick="Game.selectFaction('proletariat')">
+      <div class="faction-card-img">
+        <img src="img/faction-proletariat.jpg" alt="" onerror="this.parentElement.style.display='none'">
+      </div>
+      <div class="faction-icon">✊</div>
+      <div class="faction-name" style="color:#e63946">Vô Sản</div>
+      <div class="faction-subtitle">Liên minh Công nhân &amp; Công đoàn</div>
+      <div class="faction-desc">Bảo vệ trụ sở công đoàn và khu lao động khỏi đàn áp. Sức mạnh nằm ở đoàn kết tập thể.</div>
+      <div class="faction-stats-preview">
+        <div class="stat-preview"><span>Tinh Thần</span><div class="mini-bar"><div style="width:80%;background:#e63946"></div></div></div>
+        <div class="stat-preview"><span>Tài Nguyên</span><div class="mini-bar"><div style="width:20%;background:#2a9d8f"></div></div></div>
+        <div class="stat-preview"><span>Kiểm Soát</span><div class="mini-bar"><div style="width:30%;background:#457b9d"></div></div></div>
+        <div class="stat-preview"><span>Chính Danh</span><div class="mini-bar"><div style="width:60%;background:#e9c46a"></div></div></div>
+      </div>
+      <div class="faction-challenge">Thách thức: Ít vốn, cần xây dựng đoàn kết từ đầu</div>
+    </div>
+    <div class="faction-card" id="card-bourgeoisie" onclick="Game.selectFaction('bourgeoisie')">
+      <div class="faction-card-img">
+        <img src="img/faction-bourgeoisie.jpg" alt="" onerror="this.parentElement.style.display='none'">
+      </div>
+      <div class="faction-icon">🏭</div>
+      <div class="faction-name" style="color:#f4a261">Tư Sản</div>
+      <div class="faction-subtitle">Liên minh Chủ xưởng &amp; Tư bản</div>
+      <div class="faction-desc">Bảo vệ dây chuyền sản xuất và ảnh hưởng chính trị khỏi đình công và phá hoại. Sức mạnh nằm ở vốn.</div>
+      <div class="faction-stats-preview">
+        <div class="stat-preview"><span>Tinh Thần</span><div class="mini-bar"><div style="width:40%;background:#e63946"></div></div></div>
+        <div class="stat-preview"><span>Tài Nguyên</span><div class="mini-bar"><div style="width:80%;background:#2a9d8f"></div></div></div>
+        <div class="stat-preview"><span>Kiểm Soát</span><div class="mini-bar"><div style="width:70%;background:#457b9d"></div></div></div>
+        <div class="stat-preview"><span>Chính Danh</span><div class="mini-bar"><div style="width:50%;background:#e9c46a"></div></div></div>
+      </div>
+      <div class="faction-challenge">Thách thức: Tính chính danh thấp, dễ mất uy tín</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: MAIN GAME -->
+<div id="screen-game" class="screen">
+  <!-- Top bar -->
+  <header class="game-header">
+    <div class="header-title" id="header-faction-name">Vô Sản</div>
+    <div class="header-day">
+      Ngày <span id="day-number">1</span> / 7
+    </div>
+    <div class="header-phase" id="phase-label">Quyết Sách</div>
+    <button class="ai-toggle-btn" onclick="AI.openChat(null, null)">🎓 Cố Vấn</button>
+  </header>
+
+  <!-- Main content area -->
+  <div class="game-body">
+    <!-- Left: Narrative log -->
+    <div class="panel panel-narrative">
+      <div class="panel-title">Tình Hình</div>
+      <div id="narrative-log" class="narrative-log"></div>
+    </div>
+
+    <!-- Right: Stats + Wave -->
+    <div class="panel-right">
+      <div class="panel panel-stats">
+        <div class="panel-title">Chỉ Số Phe</div>
+        <div id="stats-container" class="stats-container">
+          <!-- Rendered by ui.js -->
+        </div>
+        <div id="buffs-container" class="buffs-container"></div>
+      </div>
+      <div class="panel panel-wave" id="wave-panel">
+        <div class="panel-title">Mối Đe Dọa</div>
+        <div id="wave-content" class="wave-content">
+          <div class="wave-placeholder">Đang chờ làn sóng tiếp theo...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom: Actions -->
+  <footer class="game-footer">
+    <div class="footer-actions">
+      <div class="actions-label">Hành Động <span id="actions-remaining" class="actions-count">Chọn 2 hành động</span></div>
+      <div id="action-cards" class="action-cards">
+        <!-- Rendered by ui.js -->
+      </div>
+    </div>
+    <div class="footer-controls">
+      <div id="selected-actions-preview" class="selected-preview"></div>
+      <button id="end-turn-btn" class="btn-end-turn" onclick="Game.endTurn()" disabled>
+        Kết Thúc Lượt →
+      </button>
+    </div>
+  </footer>
+</div>
+
+<!-- SCREEN: EVENT -->
+<div id="screen-event" class="screen">
+  <div class="event-container">
+    <div class="event-img-wrap">
+      <img id="event-img" src="" alt="" onerror="this.style.display='none'">
+    </div>
+    <div class="event-day-label" id="event-day-label"></div>
+    <div class="event-icon">📰</div>
+    <h2 id="event-title" class="event-title"></h2>
+    <p id="event-text" class="event-text"></p>
+    <div id="event-choices" class="event-choices"></div>
+  </div>
+</div>
+
+<!-- SCREEN: WAVE RESOLVE -->
+<div id="screen-resolve" class="screen">
+  <div class="resolve-container">
+    <div class="resolve-img-wrap">
+      <img id="resolve-wave-img" src="" alt="" onerror="this.style.display='none'">
+    </div>
+    <div id="resolve-wave-name" class="resolve-wave-name"></div>
+    <div id="resolve-icon" class="resolve-icon"></div>
+    <div id="resolve-text" class="resolve-text"></div>
+    <div id="resolve-damages" class="resolve-damages"></div>
+    <div id="resolve-buffs" class="resolve-buffs"></div>
+    <button class="btn-primary" onclick="Game.continueAfterResolve()">Tiếp Tục</button>
+  </div>
+</div>
+
+<!-- SCREEN: NARRATIVE -->
+<div id="screen-narrative" class="screen">
+  <div class="narrative-container">
+    <div class="narrative-img-wrap" id="narrative-img-wrap">
+      <img id="narrative-img" src="" alt="" onerror="this.style.display='none'">
+    </div>
+    <div class="narrative-label" id="narrative-label"></div>
+    <div class="narrative-body" id="narrative-body"></div>
+    <button class="btn-primary" onclick="Game.continueNarrative()">Tiếp Tục →</button>
+  </div>
+</div>
+
+<!-- SCREEN: GAME OVER -->
+<div id="screen-gameover" class="screen">
+  <div class="gameover-container">
+    <div id="gameover-outcome" class="gameover-outcome"></div>
+    <h1 id="gameover-title" class="gameover-title"></h1>
+    <p id="gameover-text" class="gameover-text"></p>
+    <div id="gameover-stats" class="gameover-stats-final"></div>
+    <button class="btn-primary" onclick="Game.restart()">Chơi Lại</button>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/ai.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+Danh sách file ảnh cần tạo (AI-generated hoặc ảnh thật):
+Kích thước khuyến nghị: 800x450px, tỉ lệ 16:9, tông màu tối.
+
+menu-bg.jpg              — Cảnh thành phố công nghiệp đêm khuya / khói nhà máy
+faction-proletariat.jpg  — Công nhân tụ tập / biểu ngữ đoàn kết
+faction-bourgeoisie.jpg  — Nhà máy / văn phòng tư bản / dây chuyền sản xuất
+narrative-prologue.jpg   — Thành phố chia đôi: khu công nghiệp vs khu dân sinh
+narrative-proletariat.jpg — Trụ sở công đoàn bê tông / phòng họp công nhân
+narrative-bourgeoisie.jpg — Văn phòng tầng cao / nhìn xuống khu công nghiệp
+wave-strike.jpg          — Đình công: công nhân bỏ dây chuyền / cổng nhà máy đóng
+wave-sabotage.jpg        — Phá hoại: máy móc hư hỏng / khói bốc / bóng tối
+wave-crackdown.jpg       — Đàn áp: lực lượng an ninh / vòi rồng / ánh đèn pha
+event-neutral_observer.jpg — Nhà báo với máy ảnh / ghi chép
+event-defection.jpg      — Phòng họp căng thẳng / nhân vật đứng tách ra
+event-outside_support.jpg — Bắt tay quốc tế / phái đoàn nước ngoài
