@@ -1,11 +1,16 @@
 'use strict';
 
 const UI = (() => {
+  let layoutResizerReady = false;
+  let syncGameLayout = null;
   // ── Screen management ──────────────────────────────────────
   function showScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const target = document.getElementById(`screen-${name}`);
     if (target) target.classList.add('active');
+    if (name === 'game' && typeof syncGameLayout === 'function') {
+      window.requestAnimationFrame(() => syncGameLayout());
+    }
   }
 
   // ── Faction theme ──────────────────────────────────────────
@@ -20,6 +25,200 @@ const UI = (() => {
   }
 
   // ── Stats rendering ────────────────────────────────────────
+  function setupLayoutResizer() {
+    if (layoutResizerReady) return;
+    layoutResizerReady = true;
+
+    const root = document.documentElement;
+    const gameScreen = document.getElementById('screen-game');
+    const gameBody = gameScreen?.querySelector('.game-body');
+    const gameHeader = gameScreen?.querySelector('.game-header');
+    const rightPanel = gameScreen?.querySelector('.panel-right');
+    const panelStats = gameScreen?.querySelector('.panel-stats');
+    const gameFooter = gameScreen?.querySelector('.game-footer');
+    const resizerX = document.getElementById('layout-resizer');
+    const resizerSidebarY = document.getElementById('sidebar-resizer');
+    const resizerFooterY = document.getElementById('footer-resizer');
+    if (!root || !gameScreen || !gameHeader || !gameBody || !rightPanel || !panelStats || !gameFooter || !resizerX || !resizerSidebarY || !resizerFooterY) return;
+
+    const STORAGE_KEYS = {
+      rightWidth: 'mln111.panelRightWidth',
+      statsHeight: 'mln111.panelStatsHeight',
+      footerHeight: 'mln111.gameFooterHeight'
+    };
+    const KEYBOARD_STEP = 14;
+    const MQL_SMALL = '(max-width: 480px)';
+
+    const setRootVar = (name, value, storageKey = null, persist = false) => {
+      root.style.setProperty(name, `${Math.round(value)}px`);
+      if (persist && storageKey) {
+        try {
+          localStorage.setItem(storageKey, String(Math.round(value)));
+        } catch (_) {}
+      }
+    };
+
+    const getStoredValue = (storageKey, fallback) => {
+      try {
+        const raw = Number(localStorage.getItem(storageKey));
+        if (Number.isFinite(raw) && raw > 0) return raw;
+      } catch (_) {}
+      return fallback;
+    };
+
+    const getRect = (el) => el.getBoundingClientRect();
+
+    const applyRightWidth = (value, persist = false) => {
+      const minRight = 160;
+      const minNarrative = 220;
+      const available = gameBody.clientWidth - minNarrative - resizerX.offsetWidth;
+      const maxRight = Math.max(minRight, available);
+      const clamped = Math.max(minRight, Math.min(maxRight, Math.round(value)));
+      setRootVar('--panel-right-width', clamped, STORAGE_KEYS.rightWidth, persist);
+      return clamped;
+    };
+
+    const applyStatsHeight = (value, persist = false) => {
+      const minStats = 150;
+      const minWave = 140;
+      const available = rightPanel.clientHeight - minWave - resizerSidebarY.offsetHeight;
+      const maxStats = Math.max(minStats, available);
+      const clamped = Math.max(minStats, Math.min(maxStats, Math.round(value)));
+      setRootVar('--panel-stats-height', clamped, STORAGE_KEYS.statsHeight, persist);
+      return clamped;
+    };
+
+    const applyFooterHeight = (value, persist = false) => {
+      const minFooter = 96;
+      const minBody = 240;
+      const softMaxFooter = 220;
+      const available = gameScreen.clientHeight - gameHeader.offsetHeight - resizerFooterY.offsetHeight - minBody;
+      const maxFooter = Math.max(minFooter, Math.min(softMaxFooter, available));
+      const clamped = Math.max(minFooter, Math.min(maxFooter, Math.round(value)));
+      setRootVar('--game-footer-height', clamped, STORAGE_KEYS.footerHeight, persist);
+      return clamped;
+    };
+
+    const currentRightWidth = () => Math.max(1, Math.round(getRect(rightPanel).width));
+    const currentStatsHeight = () => Math.max(1, Math.round(getRect(panelStats).height));
+    const currentFooterHeight = () => Math.max(1, Math.round(getRect(gameFooter).height));
+    const readCssVarPx = (name, fallback) => {
+      const raw = parseFloat(getComputedStyle(root).getPropertyValue(name));
+      return Number.isFinite(raw) && raw > 0 ? raw : fallback;
+    };
+
+    const stopDrag = (cssClass, moveHandler, upHandler, persistHandler) => {
+      document.body.classList.remove(cssClass);
+      window.removeEventListener('pointermove', moveHandler);
+      window.removeEventListener('pointerup', upHandler);
+      persistHandler();
+    };
+
+    setRootVar('--panel-right-width', getStoredValue(STORAGE_KEYS.rightWidth, 260));
+    setRootVar('--panel-stats-height', getStoredValue(STORAGE_KEYS.statsHeight, 238));
+    setRootVar('--game-footer-height', getStoredValue(STORAGE_KEYS.footerHeight, 124));
+
+    const syncLayoutToViewport = () => {
+      if (!gameScreen.classList.contains('active')) return;
+      if (window.matchMedia(MQL_SMALL).matches) return;
+      applyRightWidth(readCssVarPx('--panel-right-width', 260), true);
+      applyStatsHeight(readCssVarPx('--panel-stats-height', 238), true);
+      applyFooterHeight(readCssVarPx('--game-footer-height', 124), true);
+    };
+    syncGameLayout = syncLayoutToViewport;
+
+    let dragX = null;
+    const onMoveX = (evt) => {
+      if (!dragX) return;
+      const delta = dragX.startPointer - evt.clientX;
+      applyRightWidth(dragX.startValue + delta);
+    };
+    const onUpX = () => {
+      if (!dragX) return;
+      stopDrag('is-resizing-layout-x', onMoveX, onUpX, () => applyRightWidth(currentRightWidth(), true));
+      dragX = null;
+    };
+
+    let dragStatsY = null;
+    const onMoveStatsY = (evt) => {
+      if (!dragStatsY) return;
+      const delta = evt.clientY - dragStatsY.startPointer;
+      applyStatsHeight(dragStatsY.startValue + delta);
+    };
+    const onUpStatsY = () => {
+      if (!dragStatsY) return;
+      stopDrag('is-resizing-layout-y', onMoveStatsY, onUpStatsY, () => applyStatsHeight(currentStatsHeight(), true));
+      dragStatsY = null;
+    };
+
+    let dragFooterY = null;
+    const onMoveFooterY = (evt) => {
+      if (!dragFooterY) return;
+      const delta = dragFooterY.startPointer - evt.clientY;
+      applyFooterHeight(dragFooterY.startValue + delta);
+    };
+    const onUpFooterY = () => {
+      if (!dragFooterY) return;
+      stopDrag('is-resizing-layout-y', onMoveFooterY, onUpFooterY, () => applyFooterHeight(currentFooterHeight(), true));
+      dragFooterY = null;
+    };
+
+    resizerX.addEventListener('pointerdown', (evt) => {
+      if (window.matchMedia(MQL_SMALL).matches) return;
+      dragX = { startPointer: evt.clientX, startValue: currentRightWidth() };
+      document.body.classList.add('is-resizing-layout-x');
+      window.addEventListener('pointermove', onMoveX);
+      window.addEventListener('pointerup', onUpX);
+      evt.preventDefault();
+    });
+
+    resizerSidebarY.addEventListener('pointerdown', (evt) => {
+      if (window.matchMedia(MQL_SMALL).matches) return;
+      dragStatsY = { startPointer: evt.clientY, startValue: currentStatsHeight() };
+      document.body.classList.add('is-resizing-layout-y');
+      window.addEventListener('pointermove', onMoveStatsY);
+      window.addEventListener('pointerup', onUpStatsY);
+      evt.preventDefault();
+    });
+
+    resizerFooterY.addEventListener('pointerdown', (evt) => {
+      if (window.matchMedia(MQL_SMALL).matches) return;
+      dragFooterY = { startPointer: evt.clientY, startValue: currentFooterHeight() };
+      document.body.classList.add('is-resizing-layout-y');
+      window.addEventListener('pointermove', onMoveFooterY);
+      window.addEventListener('pointerup', onUpFooterY);
+      evt.preventDefault();
+    });
+
+    resizerX.addEventListener('keydown', (evt) => {
+      if (evt.key !== 'ArrowLeft' && evt.key !== 'ArrowRight') return;
+      const dir = evt.key === 'ArrowLeft' ? 1 : -1;
+      const step = evt.shiftKey ? KEYBOARD_STEP * 2 : KEYBOARD_STEP;
+      applyRightWidth(currentRightWidth() + (dir * step), true);
+      evt.preventDefault();
+    });
+
+    resizerSidebarY.addEventListener('keydown', (evt) => {
+      if (evt.key !== 'ArrowUp' && evt.key !== 'ArrowDown') return;
+      const dir = evt.key === 'ArrowDown' ? 1 : -1;
+      const step = evt.shiftKey ? KEYBOARD_STEP * 2 : KEYBOARD_STEP;
+      applyStatsHeight(currentStatsHeight() + (dir * step), true);
+      evt.preventDefault();
+    });
+
+    resizerFooterY.addEventListener('keydown', (evt) => {
+      if (evt.key !== 'ArrowUp' && evt.key !== 'ArrowDown') return;
+      const dir = evt.key === 'ArrowUp' ? 1 : -1;
+      const step = evt.shiftKey ? KEYBOARD_STEP * 2 : KEYBOARD_STEP;
+      applyFooterHeight(currentFooterHeight() + (dir * step), true);
+      evt.preventDefault();
+    });
+
+    window.addEventListener('resize', () => {
+      syncLayoutToViewport();
+    });
+  }
+
   function renderStats(state) {
     const container = document.getElementById('stats-container');
     if (!container) return;
@@ -122,52 +321,77 @@ const UI = (() => {
     if (!content) return;
 
     if (state.pendingWaves.length === 0 && !state.currentWave) {
-      content.innerHTML = '<div class="wave-placeholder">Ngày yên tĩnh — chuẩn bị cho làn sóng tiếp theo.</div>';
+      content.innerHTML = '<div class="wave-placeholder">Ngay yen tinh - chuan bi cho lan song tiep theo.</div>';
       return;
     }
 
     const upcoming = state.pendingWaves.map(id => WAVES[id]);
     if (upcoming.length === 0 && state.phase === 'DECISION') {
-      content.innerHTML = '<div class="wave-placeholder">Ngày yên tĩnh — chuẩn bị cho làn sóng tiếp theo.</div>';
+      content.innerHTML = '<div class="wave-placeholder">Ngay yen tinh - chuan bi cho lan song tiep theo.</div>';
       return;
     }
 
     const wave = upcoming[0] || WAVES[state.pendingWaves[0]];
     if (!wave) {
-      content.innerHTML = '<div class="wave-placeholder">Đang chờ làn sóng tiếp theo...</div>';
+      content.innerHTML = '<div class="wave-placeholder">Dang cho lan song tiep theo...</div>';
       return;
     }
 
+    const totalDamage = Object.values(wave.damage)
+      .reduce((sum, val) => sum + Math.abs(val), 0);
+    const level = totalDamage >= 60
+      ? { label: 'Khan Cap', className: 'is-critical' }
+      : totalDamage >= 40
+        ? { label: 'Rat Cao', className: 'is-high' }
+        : totalDamage >= 25
+          ? { label: 'Cao', className: 'is-mid' }
+          : { label: 'Vua', className: 'is-low' };
+
     const dmgRows = Object.entries(wave.damage)
-      .map(([s, v]) => `<div class="wave-dmg-row">
-        <span class="wave-dmg-value">${v}</span>
-        <span class="wave-dmg-label">${STAT_META[s].label}</span>
-      </div>`).join('');
+      .map(([s, v]) => {
+        const meta = STAT_META[s];
+        const impact = Math.min(100, Math.abs(v) * 3);
+        return `<div class="wave-dmg-row">
+          <div class="wave-dmg-head">
+            <span class="wave-dmg-label">${meta.icon} ${meta.label}</span>
+            <span class="wave-dmg-value">${v}</span>
+          </div>
+          <div class="wave-dmg-track">
+            <div class="wave-dmg-fill" style="width:${impact}%;background:${meta.color}"></div>
+          </div>
+        </div>`;
+      }).join('');
 
     const mitigatorRows = wave.mitigators.map(m => {
       const cur = state.stats[m.stat];
       const met = cur >= m.threshold;
       return `<div class="wave-mit-row ${met ? 'mit-met' : 'mit-unmet'}">
-        ${STAT_META[m.stat].icon} ${STAT_META[m.stat].label} ≥ ${m.threshold} → -${Math.round(m.reduction * 100)}%
-        <span class="mit-cur">[${cur} ${met ? '✓' : '✗'}]</span>
+        ${STAT_META[m.stat].icon} ${STAT_META[m.stat].label} >= ${m.threshold} -> -${Math.round(m.reduction * 100)}%
+        <span class="mit-cur">[${cur}] ${met ? 'OK' : 'THIEU'}</span>
       </div>`;
     }).join('');
 
     const defenseSection = mitigatorRows
       ? `<div class="wave-defense-section">
-           <div class="wave-defense-label">Phòng Thủ</div>
+           <div class="wave-defense-label">Phong Thu</div>
            ${mitigatorRows}
          </div>`
       : '';
 
     const extra = upcoming.length > 1
-      ? `<div class="wave-placeholder" style="margin-top:8px">+${upcoming.length - 1} làn sóng nữa hôm nay</div>`
+      ? `<div class="wave-next">+${upcoming.length - 1} lan song nua hom nay</div>`
       : '';
 
     content.innerHTML = `
       <div class="wave-incoming">
-        <div class="wave-icon">${wave.icon}</div>
-        <div class="wave-name">${wave.name}</div>
+        <div class="wave-topline">
+          <div class="wave-icon">${wave.icon}</div>
+          <div class="wave-title-wrap">
+            <div class="wave-name">${wave.name}</div>
+            <div class="wave-sub">Tổng tác động: <strong>-${totalDamage}</strong></div>
+          </div>
+          <div class="wave-level ${level.className}">${level.label}</div>
+        </div>
         <div class="wave-incoming-damages">${dmgRows}</div>
         ${defenseSection}
         ${extra}
@@ -232,6 +456,7 @@ const UI = (() => {
     if (waveImg) {
       const wrap = waveImg.parentElement;
       wrap.setAttribute('data-wave', wave.id);
+      waveImg.style.display = '';
       waveImg.src = `img/wave-${wave.id}.jpg`;
     }
 
@@ -266,6 +491,7 @@ const UI = (() => {
     if (eventImg) {
       const wrap = eventImg.parentElement;
       wrap.setAttribute('data-event', event.id);
+      eventImg.style.display = '';
       eventImg.src = `img/event-${event.id}.jpg`;
     }
     document.getElementById('event-day-label').textContent = `Ngày ${state.day}`;
@@ -330,17 +556,74 @@ const UI = (() => {
     const log = document.getElementById('narrative-log');
     if (!log) return;
     const el = document.createElement('div');
-    el.className = 'log-entry';
+    el.className = 'log-entry ai-card';
     el.innerHTML = `
-      <span class="log-day">🎓</span>
-      <span class="log-text type-ai">${text}<br>
-        <button class="btn-ask-ai">Hỏi sâu hơn về ${sourceName} →</button>
-      </span>`;
+      <div class="ai-card-header">
+        <span class="ai-card-icon">🎓</span>
+        <span class="ai-card-label">AI Cố Vấn</span>
+      </div>
+      <div class="ai-card-body">${text}</div>
+      <button class="btn-ask-ai">Hỏi sâu hơn về ${sourceName} →</button>`;
     el.querySelector('.btn-ask-ai').addEventListener('click', () => {
       AI.openChat(`Hãy phân tích sâu hơn về "${sourceName}" trong bối cảnh đấu tranh giai cấp lịch sử.`, ctx);
     });
     log.appendChild(el);
     log.scrollTop = log.scrollHeight;
+  }
+
+  // ── Opponent reaction in narrative log ───────────────────
+  function appendOpponentReaction(text, oppName, ctx) {
+    const log = document.getElementById('narrative-log');
+    if (!log) return;
+    const el = document.createElement('div');
+    el.className = 'log-entry opponent-card';
+    el.innerHTML = `
+      <div class="opponent-card-header">
+        <span class="opponent-card-icon">⚔️</span>
+        <span class="opponent-card-label">${oppName}</span>
+      </div>
+      <div class="opponent-card-body">${text}</div>
+      <button class="btn-challenge-opponent">Đối đáp lại →</button>`;
+    el.querySelector('.btn-challenge-opponent').addEventListener('click', () => {
+      AI.openOpponentChat(null, ctx, text);
+    });
+    log.appendChild(el);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  // ── Image banner in narrative log ────────────────────────
+  function appendLogBanner(type, id, label, day) {
+    const log = document.getElementById('narrative-log');
+    if (!log) return;
+    const el = document.createElement('div');
+    el.className = 'log-image-banner';
+    el.setAttribute('data-type', type);
+    if (id)  el.setAttribute('data-id', id);
+    if (day) el.setAttribute('data-day', String(day));
+
+    const imgSrc = type === 'wave'      ? `img/wave-${id}.jpg`
+                 : type === 'event'     ? `img/event-${id}.jpg`
+                 : type === 'day-start' ? `img/day-${day}.jpg`
+                 : type === 'day-end'   ? `img/day-end.jpg`
+                 : null;
+
+    el.innerHTML = `
+      ${imgSrc ? `<img src="${imgSrc}" alt="" onerror="this.style.display='none'">` : ''}
+      <div class="log-banner-overlay">
+        <span class="log-banner-label">${label || ''}</span>
+      </div>`;
+    log.appendChild(el);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  // ── Mailbox badge ──────────────────────────────────────────
+  function setBadge(type, count) {
+    const id = type === 'advisor' ? 'advisor-badge' : 'opponent-badge';
+    const el = document.getElementById(id);
+    if (!el) return;
+    const n = Math.max(0, count);
+    el.textContent = n > 0 ? (n > 99 ? '99+' : String(n)) : '';
+    el.classList.toggle('visible', n > 0);
   }
 
   // ── Day transition overlay ────────────────────────────────
@@ -412,7 +695,7 @@ const UI = (() => {
       const key = imgSrc ? imgSrc.replace('img/narrative-', '').replace('.jpg', '') : 'prologue';
       wrap.setAttribute('data-narrative', key);
     }
-    if (img) img.src = imgSrc || '';
+    if (img) { img.style.display = ''; img.src = imgSrc || ''; }
     showScreen('narrative');
   }
 
@@ -433,6 +716,8 @@ const UI = (() => {
     showScreen('gameover');
   }
 
+  setupLayoutResizer();
+
   return {
     showScreen,
     setFactionTheme,
@@ -451,6 +736,10 @@ const UI = (() => {
     showGameOver,
     showNarrative,
     showDayTransition,
-    appendAICommentary
+    appendAICommentary,
+    appendOpponentReaction,
+    setBadge,
+    appendLogBanner
   };
 })();
+

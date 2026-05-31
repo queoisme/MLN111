@@ -4,6 +4,7 @@ const Game = (() => {
   // ── State ─────────────────────────────────────────────────
   let state = null;
   let _narrativeCallback = null;
+  let _narrativeBackScreen = null;
 
   function freshState(factionId) {
     const faction = FACTIONS[factionId];
@@ -24,16 +25,27 @@ const Game = (() => {
 
   // ── Navigation ────────────────────────────────────────────
   function startFactionSelect() {
+    _narrativeBackScreen = 'menu';
     _narrativeCallback = () => UI.showScreen('faction');
     UI.showNarrative(NARRATIVE.prologue, 'Lời Mở Đầu', 'img/narrative-prologue.jpg');
   }
 
   function selectFaction(factionId) {
     state = freshState(factionId);
+    if (typeof AI !== 'undefined') AI.resetMessages();
     const faction = FACTIONS[factionId];
     UI.setFactionTheme(faction);
+    _narrativeBackScreen = 'faction';
     _narrativeCallback = () => _initGame(factionId);
     UI.showNarrative(NARRATIVE.factionIntro[factionId], faction.name, `img/narrative-${factionId}.jpg`);
+  }
+
+  function goBackNarrative() {
+    const back = _narrativeBackScreen;
+    _narrativeBackScreen = null;
+    _narrativeCallback = null;
+    if (back === 'faction') state = null;
+    UI.showScreen(back || 'menu');
   }
 
   function _initGame(factionId) {
@@ -48,6 +60,7 @@ const Game = (() => {
     UI.setPhaseLabel('Quyết Sách', '');
 
     UI.showDayTransition(1, factionId, false, () => {
+      UI.appendLogBanner('day-start', null, `Ngày 1 · ${DAY_BRIEFINGS[1].label}`, 1);
       addLog(`Phe ${faction.name} chuẩn bị chiến đấu. Ngày 1 bắt đầu.`, 'system');
       addLog(`Mục tiêu: Trụ vững 7 ngày trước các làn sóng khủng hoảng.`, 'system');
       const b1 = DAY_BRIEFINGS[1];
@@ -161,12 +174,12 @@ const Game = (() => {
       .join(', ');
     addLog(`[Sự kiện] Bạn chọn "${choice.label}": ${effectParts}`, 'event');
 
-    // Auto AI commentary on the event choice
     if (typeof AI !== 'undefined') {
       AI.autoAfterEvent(event, choice.label, state);
     }
 
     UI.showScreen('game');
+    UI.appendLogBanner('event', event.id, event.title, state.day);
     startNextWave();
   }
 
@@ -243,6 +256,7 @@ const Game = (() => {
     // Prefetch AI commentary while player reads resolve screen
     if (typeof AI !== 'undefined') {
       AI.autoAfterWave(wave, mitigationRatio, state);
+      AI.opponentAutoAfterWave(wave, mitigationRatio, state);
     }
 
     UI.showResolveScreen(wave, damages, mitigationLog, resolutionText, state);
@@ -253,8 +267,15 @@ const Game = (() => {
     UI.renderStats(state);
     UI.setPhaseLabel('Quyết Sách', '');
 
+    if (state.currentWave) {
+      UI.appendLogBanner('wave', state.currentWave.id, state.currentWave.name, state.day);
+    }
+
     // Flush prefetched wave commentary into the log
-    if (typeof AI !== 'undefined') AI.flushPendingAuto();
+    if (typeof AI !== 'undefined') {
+      AI.flushPendingAuto();
+      AI.flushOpponentAuto();
+    }
 
     // Check lose condition
     const faction = FACTIONS[state.faction];
@@ -276,6 +297,7 @@ const Game = (() => {
 
   function endDay() {
     addLog(`— Ngày ${state.day} kết thúc. —`, 'system');
+    UI.appendLogBanner('day-end', null, `Ngày ${state.day} · Kết thúc`, state.day);
 
     // Tick buffs
     state.activeBuffs = state.activeBuffs
@@ -302,10 +324,12 @@ const Game = (() => {
       UI.setPhaseLabel('Quyết Sách', '');
       document.getElementById('end-turn-btn').disabled = true;
 
+      const briefing = DAY_BRIEFINGS[state.day];
+      UI.appendLogBanner('day-start', null, `Ngày ${state.day} · ${briefing.label}`, state.day);
+
       const dayNarrative = NARRATIVE.dailyNarrative[state.faction]?.[state.day];
       if (dayNarrative) addLog(dayNarrative, 'narrative');
 
-      const briefing = DAY_BRIEFINGS[state.day];
       if (state.day === 7) {
         document.getElementById('screen-game').classList.add('day-final');
         addLog(`⚠ [${briefing.label}] ${briefing.tip}`, 'briefing');
@@ -411,6 +435,7 @@ const Game = (() => {
     resolveEvent,
     restart,
     continueNarrative,
+    goBackNarrative,
     getState: () => state
   };
 })();

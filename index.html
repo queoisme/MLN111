@@ -76,7 +76,8 @@
       Ngày <span id="day-number">1</span> / 7
     </div>
     <div class="header-phase" id="phase-label">Quyết Sách</div>
-    <button class="ai-toggle-btn" onclick="AI.openChat(null, null)">🎓 Cố Vấn</button>
+    <button class="opponent-toggle-btn" aria-expanded="false" aria-controls="opponent-panel" onclick="AI.openOpponentChat(null, null)">⚔️ Đối Thủ<span class="btn-badge" id="opponent-badge"></span></button>
+    <button class="ai-toggle-btn" aria-expanded="false" aria-controls="ai-panel" onclick="AI.openChat(null, null)">🎓 Cố Vấn<span class="btn-badge" id="advisor-badge"></span></button>
   </header>
 
   <!-- Main content area -->
@@ -87,6 +88,15 @@
       <div id="narrative-log" class="narrative-log"></div>
     </div>
 
+    <div
+      id="layout-resizer"
+      class="layout-resizer"
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="KÃ©o Ä‘á»ƒ thay Ä‘á»•i Ä‘á»™ rá»™ng cá»™t pháº£i"
+      tabindex="0"
+    ></div>
+
     <!-- Right: Stats + Wave -->
     <div class="panel-right">
       <div class="panel panel-stats">
@@ -96,6 +106,14 @@
         </div>
         <div id="buffs-container" class="buffs-container"></div>
       </div>
+      <div
+        id="sidebar-resizer"
+        class="layout-resizer layout-resizer-y"
+        role="separator"
+        aria-orientation="horizontal"
+        aria-label="Resize right column panels"
+        tabindex="0"
+      ></div>
       <div class="panel panel-wave" id="wave-panel">
         <div class="panel-title">Mối Đe Dọa</div>
         <div id="wave-content" class="wave-content">
@@ -104,6 +122,15 @@
       </div>
     </div>
   </div>
+
+  <div
+    id="footer-resizer"
+    class="layout-resizer layout-resizer-y layout-resizer-full"
+    role="separator"
+    aria-orientation="horizontal"
+    aria-label="Resize footer"
+    tabindex="0"
+  ></div>
 
   <!-- Bottom: Actions -->
   <footer class="game-footer">
@@ -159,7 +186,10 @@
     </div>
     <div class="narrative-label" id="narrative-label"></div>
     <div class="narrative-body" id="narrative-body"></div>
-    <button class="btn-primary" onclick="Game.continueNarrative()">Tiếp Tục →</button>
+    <div class="narrative-actions">
+      <button class="btn-secondary" onclick="Game.goBackNarrative()">← Quay Lại</button>
+      <button class="btn-primary" onclick="Game.continueNarrative()">Tiếp Tục →</button>
+    </div>
   </div>
 </div>
 
@@ -177,6 +207,8 @@
 <script src="js/data.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/voice.js"></script>
 <script src="js/ai.js"></script>
 </body>
 </html>
+

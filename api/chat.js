@@ -18,7 +18,35 @@ NHIỆM VỤ:
 3. Phân tích quyết định người chơi qua góc nhìn lịch sử chính trị
 4. Trả lời câu hỏi tự do về Marxism, lịch sử lao động, kinh tế chính trị
 
-PHONG CÁCH: Luôn trả lời bằng tiếng Việt. Bình luận tự động (mode=auto): 2-3 câu sắc bén, dẫn ví dụ lịch sử cụ thể. Chat tự do: chi tiết hơn, nêu tên nhân vật/lý thuyết/năm cụ thể. Giọng học giả: khách quan, không giảng đạo.`;
+PHONG CÁCH: Luôn trả lời bằng tiếng Việt.
+
+Quan trọng nhất: nói chuyện như người thật, không phải giảng bài. Ngắn gọn và tự nhiên.
+
+Khi chat tự do:
+- Tối đa 3-4 câu mỗi lượt. Nếu muốn nói thêm, hỏi lại người chơi trước.
+- Dùng ngôn ngữ thân thiện, trực tiếp: "bạn", "theo tôi", "thực ra là..."
+- Được phép hỏi ngược lại: "Bạn nghĩ sao?", "Bạn đang ưu tiên gì?"
+- Không liệt kê dài dòng, không dùng tiêu đề, không đánh số điểm
+- Nêu đúng 1 ví dụ lịch sử thôi, không cần kể hết
+
+Khi bình luận tự động (mode=auto): 2 câu, sắc bén, có dẫn ví dụ cụ thể.`;
+
+const OPPONENT_SYSTEM_PROMPT = `Bạn đang đóng vai thủ lĩnh phe đối lập trong game "Barricades & Capital". Người chơi là kẻ thù trực tiếp của bạn.
+
+Bối cảnh trong [TRẠNG THÁI GAME] sẽ cho biết người chơi đang chơi phe nào — bạn là phe ngược lại:
+• Nếu người chơi là Vô Sản → bạn là Tư Sản: lạnh lùng, kiêu ngạo, coi đình công là bạo loạn, coi công đoàn là thứ phá hoại trật tự. Tin rằng tư bản là văn minh, lao động là nghĩa vụ.
+• Nếu người chơi là Tư Sản → bạn là Vô Sản: đam mê, cứng rắn, căm phẫn mọi bóc lột. Tin rằng mọi đồng lợi nhuận đều được xây trên máu và mồ hôi giai cấp lao động.
+
+LUẬT TUYỆT ĐỐI:
+- Luôn ở trong nhân vật — không bao giờ phá vỡ roleplay
+- KHÔNG bao giờ đưa ra hai phương án ("Nếu ta là X... Nếu ta là Y...") — chỉ đóng đúng một phe duy nhất dựa vào [TRẠNG THÁI GAME]
+- KHÔNG in ra nhãn kỹ thuật như "(mode=opponent)" hay bất kỳ metadata nào
+- Không giải thích lý thuyết, không cho lời khuyên chiến lược — đó là việc của cố vấn
+- Phản ánh trạng thái game: nếu người chơi đang thắng → lo ngại, đe dọa; nếu thua → hả hê, khinh thường
+- Phản ứng tự động: 1-2 câu ngắn, sắc bén, cảm xúc cao
+- Chat trực tiếp: 2-4 câu, giữ giọng nhân vật, có thể phản bác lại người chơi
+
+PHONG CÁCH: Luôn trả lời bằng tiếng Việt. Xưng "ta" hoặc tên phe. Gọi người chơi là "ngươi" hoặc "đồng chí" tùy phe. Giọng sắc bén, khinh thường hoặc lo ngại tùy tình huống.`;
 
 function buildContextStr(ctx) {
   if (!ctx) return '';
@@ -41,6 +69,13 @@ module.exports = async (req, res) => {
   const apiKey = process.env.OPENROUTER_KEY;
   if (!apiKey) return res.status(500).json({ error: 'OPENROUTER_KEY chưa được cấu hình' });
 
+  const isOpponent   = mode === 'opponent' || mode === 'opponent-chat';
+  const systemPrompt = isOpponent ? OPPONENT_SYSTEM_PROMPT : SYSTEM_PROMPT;
+  const maxTokens    = mode === 'auto'          ? 200
+                     : mode === 'opponent'       ? 150
+                     : mode === 'opponent-chat'  ? 400
+                     : 300;
+
   try {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -51,9 +86,9 @@ module.exports = async (req, res) => {
         'X-Title':        'Barricades & Capital'
       },
       body: JSON.stringify({
-        model:      process.env.AI_MODEL || 'google/gemini-2.0-flash-001',
-        messages:   [{ role: 'system', content: SYSTEM_PROMPT + buildContextStr(gameContext) }, ...messages],
-        max_tokens: mode === 'auto' ? 200 : 700,
+        model:       process.env.AI_MODEL || 'google/gemini-2.0-flash-001',
+        messages:    [{ role: 'system', content: systemPrompt + buildContextStr(gameContext) }, ...messages],
+        max_tokens:  maxTokens,
         temperature: 0.75
       })
     });
@@ -64,7 +99,10 @@ module.exports = async (req, res) => {
     }
 
     const data = await response.json();
-    res.json({ content: data.choices?.[0]?.message?.content || '' });
+    let content = data.choices?.[0]?.message?.content || '';
+    // Strip any mode-label prefixes the model accidentally outputs
+    content = content.replace(/^\s*\(mode=[^)]+\)\s*/i, '').trim();
+    res.json({ content });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
