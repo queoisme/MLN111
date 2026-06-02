@@ -1619,38 +1619,41 @@ html, body {
 /* AI toggle button in game header */
 .ai-toggle-btn {
   position: relative;
-  background: linear-gradient(180deg, #214d52 0%, #1b3f44 100%);
+  background: transparent;
   border: 1px solid #3f7b78;
-  color: #e3fffa;
-  border-radius: 4px;
-  padding: 4px 12px;
-  font-size: 0.72rem;
-  font-family: monospace;
-  letter-spacing: 0.08em;
+  border-left: 3px solid #2a9d8f;
+  color: #7ecec4;
+  border-radius: 3px;
+  padding: 5px 14px;
+  font-size: 0.7rem;
+  font-family: 'Palatino Linotype', 'Book Antiqua', Cambria, Georgia, serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 0 14px rgba(42,157,143,0.22);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 .ai-toggle-btn::after {
   content: '';
   position: absolute;
   top: -3px;
   right: -3px;
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: #66ffd0;
-  box-shadow: 0 0 8px #66ffd0;
+  background: #2a9d8f;
+  box-shadow: 0 0 6px #2a9d8f;
   animation: aiBeacon 1.7s ease-in-out infinite;
 }
 .ai-toggle-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 0 18px rgba(42,157,143,0.32);
+  background: rgba(42,157,143,0.1);
+  color: #b5f5e8;
+  border-color: #2a9d8f;
 }
 .ai-toggle-btn.active {
-  background: linear-gradient(180deg, #227f67 0%, #1f6d5b 100%);
-  border-color: #73e4c3;
-  color: #f5fff9;
+  background: rgba(42,157,143,0.12);
+  border-left-color: #5ecfba;
+  border-color: #2a9d8f;
+  color: #c8fff5;
 }
 .ai-chat-open .ai-toggle-btn::after {
   animation-duration: 0.9s;
@@ -1752,36 +1755,39 @@ html, body {
 /* ── Opponent toggle button in header ────────────────────── */
 .opponent-toggle-btn {
   position: relative;
-  background: linear-gradient(180deg, #521a1a 0%, #3d1010 100%);
+  background: transparent;
   border: 1px solid #7b2a2a;
-  color: #ffe8e8;
-  border-radius: 4px;
-  padding: 4px 12px;
-  font-size: 0.72rem;
-  font-family: monospace;
-  letter-spacing: 0.08em;
+  border-left: 3px solid #e63946;
+  color: #d4706e;
+  border-radius: 3px;
+  padding: 5px 14px;
+  font-size: 0.7rem;
+  font-family: 'Palatino Linotype', 'Book Antiqua', Cambria, Georgia, serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 0 14px rgba(192,57,43,0.22);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 .opponent-toggle-btn::after {
   content: '';
   position: absolute;
   top: -3px; right: -3px;
-  width: 7px; height: 7px;
+  width: 6px; height: 6px;
   border-radius: 50%;
-  background: #ff6666;
-  box-shadow: 0 0 8px #ff6666;
+  background: #e63946;
+  box-shadow: 0 0 6px #e63946;
   animation: opponentBeacon 2.1s ease-in-out infinite;
 }
 .opponent-toggle-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 0 18px rgba(192,57,43,0.32);
+  background: rgba(230,57,70,0.1);
+  color: #ffaaaa;
+  border-color: #e63946;
 }
 .opponent-toggle-btn.active {
-  background: linear-gradient(180deg, #7f2222 0%, #6d1c1c 100%);
-  border-color: #e47373;
-  color: #fff5f5;
+  background: rgba(230,57,70,0.12);
+  border-left-color: #ff7b89;
+  border-color: #e63946;
+  color: #ffd6d6;
 }
 @keyframes opponentBeacon {
   0%, 100% { transform: scale(1);    opacity: 0.9; }

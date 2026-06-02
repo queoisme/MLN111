@@ -42,11 +42,15 @@ const AI = (() => {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ messages, gameContext, mode })
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      return data.content || null;
-    } catch {
-      return null;
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        let msg = data.error || `HTTP ${res.status}`;
+        try { const parsed = JSON.parse(msg); msg = parsed?.error?.message || msg; } catch {}
+        return { content: null, error: msg };
+      }
+      return { content: data.content || null, error: null };
+    } catch (err) {
+      return { content: null, error: err.message };
     }
   }
 
@@ -62,7 +66,7 @@ const AI = (() => {
     const prompt = `Trong game, làn sóng "${wave.name}" vừa xảy ra với mức giảm thiệt hại ${level}. Hãy kết nối điều này với một sự kiện lịch sử thực tế cụ thể (nêu tên, năm, địa điểm) trong 2-3 câu.`;
 
     pendingAuto = { ctx, prompt, waveId: wave.id, waveName: wave.name, content: null };
-    callAPI([{ role: 'user', content: prompt }], ctx, 'auto').then(c => {
+    callAPI([{ role: 'user', content: prompt }], ctx, 'auto').then(({ content: c }) => {
       if (pendingAuto) pendingAuto.content = c;
     });
   }
@@ -95,7 +99,7 @@ const AI = (() => {
     });
     const prompt = `Bạn là thủ lĩnh phe ${oppName}. Làn sóng "${wave.name}" vừa xảy ra — đối thủ của bạn ${playerWinning ? 'đã cản được phần lớn thiệt hại' : 'chịu thiệt hại nặng nề'}. Phản ứng ngắn gọn, đúng nhân vật (1-2 câu).`;
     pendingOpponent = { ctx, prompt, waveName: wave.name, oppName, content: null };
-    callAPI([{ role: 'user', content: prompt }], ctx, 'opponent').then(c => {
+    callAPI([{ role: 'user', content: prompt }], ctx, 'opponent').then(({ content: c }) => {
       if (pendingOpponent) pendingOpponent.content = c;
     });
   }
@@ -120,7 +124,7 @@ const AI = (() => {
       event: `Sự kiện "${event.title}" — người chơi chọn: "${choiceLabel}".`
     });
     const prompt = `Trong game, người chơi đối mặt với tình huống "${event.title}" và chọn "${choiceLabel}". Trong 2-3 câu, phân tích lựa chọn này qua góc nhìn lịch sử chính trị thực tế.`;
-    const content = await callAPI([{ role: 'user', content: prompt }], ctx, 'auto');
+    const { content } = await callAPI([{ role: 'user', content: prompt }], ctx, 'auto');
     if (content) receiveAdvisorMessage(content, event.title, ctx);
   }
 
@@ -384,10 +388,10 @@ const AI = (() => {
     advisorConvo.push({ role: 'user', content: text });
 
     const typingEl = appendMsg('ai', '…', true);
-    const content  = await callAPI(chatHistory, chatContext, 'chat');
+    const { content, error } = await callAPI(chatHistory, chatContext, 'chat');
     typingEl.remove();
 
-    const reply = content || '⚠️ Không kết nối được AI backend. Hãy chắc chắn server đang chạy (`node server.js`).';
+    const reply = content || `⚠️ Lỗi kết nối AI: ${error || 'Hãy chắc chắn server đang chạy (node server.js).'}`;
     appendMsg('ai', reply);
     chatHistory.push({ role: 'assistant', content: reply });
     advisorConvo.push({ role: 'assistant', content: reply });
@@ -530,10 +534,10 @@ const AI = (() => {
     opponentConvo.push({ role: 'user', content: text });
 
     const typingEl = appendOpponentMsg('ai', '…', true);
-    const content  = await callAPI(opponentHistory, opponentContext, 'opponent-chat');
+    const { content, error } = await callAPI(opponentHistory, opponentContext, 'opponent-chat');
     typingEl.remove();
 
-    const reply = content || '⚠️ Không kết nối được AI backend.';
+    const reply = content || `⚠️ Lỗi kết nối AI: ${error || 'server chưa chạy.'}`;
     appendOpponentMsg('ai', reply);
     opponentHistory.push({ role: 'assistant', content: reply });
     opponentConvo.push({ role: 'assistant', content: reply });
