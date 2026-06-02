@@ -591,11 +591,7 @@ const AI = (() => {
     const playerStrong = avg >= 55;
     const prompt = `Ngày ${state.day}/7 bắt đầu. Đối thủ của ta ${playerStrong ? 'đang chiếm ưu thế' : 'đang suy yếu'}. Hãy nói 1-2 câu đúng nhân vật ${oppName} để mở đầu ngày mới — sắc bén, cảm xúc.`;
     const { content } = await callAPI([{ role: 'user', content: prompt }], ctx, 'opponent');
-    if (content) {
-      opponentHistory.push({ role: 'assistant', content });
-      opponentConvo.push({ role: 'assistant', content, label: oppName });
-      receiveOpponentMessage(content, oppName, ctx);
-    }
+    if (content) receiveOpponentMessage(content, oppName, ctx);
   }
 
   return {

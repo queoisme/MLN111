@@ -253,9 +253,8 @@ const Game = (() => {
 
     UI.renderBuffs(state);
 
-    // Prefetch AI commentary while player reads resolve screen
+    // Prefetch opponent reaction while player reads resolve screen
     if (typeof AI !== 'undefined') {
-      AI.autoAfterWave(wave, mitigationRatio, state);
       AI.opponentAutoAfterWave(wave, mitigationRatio, state);
     }
 
@@ -271,9 +270,8 @@ const Game = (() => {
       UI.appendLogBanner('wave', state.currentWave.id, state.currentWave.name, state.day);
     }
 
-    // Flush prefetched wave commentary into the log
+    // Flush prefetched opponent reaction into the log
     if (typeof AI !== 'undefined') {
-      AI.flushPendingAuto();
       AI.flushOpponentAuto();
     }
 
