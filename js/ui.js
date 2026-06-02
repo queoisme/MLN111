@@ -321,19 +321,19 @@ const UI = (() => {
     if (!content) return;
 
     if (state.pendingWaves.length === 0 && !state.currentWave) {
-      content.innerHTML = '<div class="wave-placeholder">Ngay yen tinh - chuan bi cho lan song tiep theo.</div>';
+      content.innerHTML = '<div class="wave-placeholder">Ngày yên tĩnh — chuẩn bị cho làn sóng tiếp theo.</div>';
       return;
     }
 
     const upcoming = state.pendingWaves.map(id => WAVES[id]);
     if (upcoming.length === 0 && state.phase === 'DECISION') {
-      content.innerHTML = '<div class="wave-placeholder">Ngay yen tinh - chuan bi cho lan song tiep theo.</div>';
+      content.innerHTML = '<div class="wave-placeholder">Ngày yên tĩnh — chuẩn bị cho làn sóng tiếp theo.</div>';
       return;
     }
 
     const wave = upcoming[0] || WAVES[state.pendingWaves[0]];
     if (!wave) {
-      content.innerHTML = '<div class="wave-placeholder">Dang cho lan song tiep theo...</div>';
+      content.innerHTML = '<div class="wave-placeholder">Đang chờ làn sóng tiếp theo...</div>';
       return;
     }
 

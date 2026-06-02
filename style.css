@@ -694,8 +694,10 @@ html, body {
   background: #1a1a3a;
 }
 .action-card.disabled {
-  opacity: 0.35;
+  opacity: 0.32;
   cursor: not-allowed;
+  filter: grayscale(0.6);
+  pointer-events: none;
 }
 .action-card-icon { font-size: 1.3rem; }
 .action-card-name { font-size: 0.75rem; font-weight: bold; color: var(--white); line-height: 1.2; }
@@ -784,8 +786,9 @@ html, body {
   color: var(--bg);
 }
 .btn-end-turn:disabled {
-  opacity: 0.35;
+  opacity: 0.3;
   cursor: not-allowed;
+  filter: grayscale(0.5);
 }
 .btn-choice {
   background: var(--bg3);
@@ -2107,6 +2110,18 @@ html, body {
 
 /* ── UTILITIES ────────────────────────────────────────────── */
 .hidden { display: none !important; }
+
+/* Focus outlines cho keyboard navigation */
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-end-turn:focus-visible,
+.btn-choice:focus-visible,
+.action-card:focus-visible,
+.ai-starter-btn:focus-visible,
+.faction-card:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+}
 
 .fade-in  { animation: fadeIn 0.3s ease forwards; }
 .fade-out { animation: fadeOut 0.3s ease forwards; }

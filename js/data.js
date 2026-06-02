@@ -141,11 +141,11 @@ const ACTIONS = {
   },
   bribe_officials: {
     id: 'bribe_officials', name: 'Mua Chuộc Quan Chức', icon: '💼',
-    cost: { capital: 25 }, effect: {},
+    cost: { capital: 35 }, effect: { legitimacy: -10 },
     buff: { type: 'skip_next_wave', turns: 1 },
-    description: 'Chi 25 vốn. Bỏ qua wave tiếp theo hoàn toàn.',
+    description: 'Chi 35 vốn. Chính danh -10. Bỏ qua wave tiếp theo hoàn toàn.',
     flavorText: 'Chính sách không phải đạo đức — chính sách là con số trong ngân sách.',
-    availableFrom: 1
+    availableFrom: 2
   },
   automate: {
     id: 'automate', name: 'Tự Động Hóa', icon: '⚙️',
@@ -158,7 +158,7 @@ const ACTIONS = {
   legal_pressure: {
     id: 'legal_pressure', name: 'Áp Lực Pháp Lý', icon: '⚖️',
     cost: { capital: 12 }, effect: { legitimacy: 10, morale: -8 },
-    description: 'Chi 12 vốn. Chính danh +10, tinh thần địch -8.',
+    description: 'Chi 12 vốn. Chính danh +10. Tinh thần -8 (nội bộ phản ứng).',
     flavorText: 'Tòa án là vũ khí — biết cách sử dụng là ưu thế quyết định.',
     availableFrom: 2
   },
@@ -166,7 +166,7 @@ const ACTIONS = {
     id: 'propaganda_blitz', name: 'Tổng Tấn Công Truyền Thông', icon: '📻',
     cost: { capital: 22 }, effect: { legitimacy: 18, morale: -10 },
     buff: { type: 'reduce_wave_media_war', reduction: 0.5, turns: 1 },
-    description: 'Chi 22 vốn. Chính danh +18, tinh thần địch -10. Giảm 50% thiệt hại Chiến Tranh Truyền Thông.',
+    description: 'Chi 22 vốn. Chính danh +18. Tinh thần -10 (chi phí chính trị). Giảm 50% thiệt hại Chiến Tranh Truyền Thông.',
     flavorText: 'Không phải tuyên truyền — là định hình nhận thức. Câu chữ rất quan trọng.',
     availableFrom: 2
   },
@@ -190,7 +190,7 @@ const ACTIONS = {
     id: 'infiltrate', name: 'Cài Người Vào Trong', icon: '🕵️',
     cost: { capital: 18 }, effect: { control: 12, morale: -12 },
     buff: { type: 'reduce_wave_general_strike', reduction: 0.4, turns: 1 },
-    description: 'Chi 18 vốn. Kiểm soát +12, tinh thần địch -12. Giảm 40% thiệt hại Tổng Đình Công.',
+    description: 'Chi 18 vốn. Kiểm soát +12. Tinh thần -12 (rủi ro bị lộ). Giảm 40% thiệt hại Tổng Đình Công.',
     flavorText: 'Biết trước kế hoạch của kẻ thù là lợi thế lớn hơn bất kỳ vũ khí nào.',
     availableFrom: 3
   }
