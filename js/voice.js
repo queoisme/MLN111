@@ -20,8 +20,9 @@ const Voice = (() => {
 
   function getVoice(type) {
     const viVoices = voices.filter(v => v.lang.startsWith('vi'));
-    if (type === 'opponent') return viVoices[1] || viVoices[0] || null;
-    return viVoices[0] || null;
+    const fallback = viVoices[0] || voices[0] || null;
+    if (type === 'opponent') return viVoices[1] || fallback;
+    return fallback;
   }
 
   // ── TTS queue ─────────────────────────────────────────────

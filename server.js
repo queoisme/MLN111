@@ -88,7 +88,7 @@ app.post('/api/chat', async (req, res) => {
         'X-Title':       'Barricades & Capital'
       },
       body: JSON.stringify({
-        model:       process.env.AI_MODEL || 'google/gemini-2.0-flash-001',
+        model:       process.env.AI_MODEL || 'google/gemini-3.1-flash-lite',
         messages:    [{ role: 'system', content: systemPrompt + buildContextStr(gameContext) }, ...messages],
         max_tokens:  maxTokens,
         temperature: 0.75

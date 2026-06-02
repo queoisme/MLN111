@@ -151,7 +151,7 @@ const ACTIONS = {
     id: 'automate', name: 'Tự Động Hóa', icon: '⚙️',
     cost: { capital: 30 }, effect: {},
     buff: { type: 'passive_capital', amount: 8, permanent: true },
-    description: 'Chi 30 vốn. Mỗi ngày sau +8 vốn thụ động.',
+    description: 'Chi 30 vốn. Mỗi ngày sau +8 vốn thụ động. (Chỉ dùng 1 lần)',
     flavorText: 'Máy móc không đình công, không yêu cầu, không có nhân phẩm — đó chính xác là điều bạn cần.',
     availableFrom: 3
   },

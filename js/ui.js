@@ -271,7 +271,8 @@ const UI = (() => {
       const action = ACTIONS[id];
       const isFree = Object.keys(action.cost).length === 0;
       const isSelected = state.selectedActions.includes(id);
-      const isDisabled = !isSelected && !canAfford(action, state);
+      const isOneTime = action.buff?.permanent && state.automateUsed;
+      const isDisabled = !isSelected && (!canAfford(action, state) || isOneTime);
       const isMaxed = !isSelected && !isFree && paidSelected >= 2;
 
       const costText = buildCostText(action);
@@ -325,18 +326,14 @@ const UI = (() => {
     const content = document.getElementById('wave-content');
     if (!content) return;
 
-    if (state.pendingWaves.length === 0 && !state.currentWave) {
+    const upcoming = state.pendingWaves.map(id => WAVES[id]).filter(Boolean);
+
+    if (upcoming.length === 0 && !state.currentWave) {
       content.innerHTML = '<div class="wave-placeholder">Ngày yên tĩnh — chuẩn bị cho làn sóng tiếp theo.</div>';
       return;
     }
 
-    const upcoming = state.pendingWaves.map(id => WAVES[id]);
-    if (upcoming.length === 0 && state.phase === 'DECISION') {
-      content.innerHTML = '<div class="wave-placeholder">Ngày yên tĩnh — chuẩn bị cho làn sóng tiếp theo.</div>';
-      return;
-    }
-
-    const wave = upcoming[0] || WAVES[state.pendingWaves[0]];
+    const wave = upcoming[0];
     if (!wave) {
       content.innerHTML = '<div class="wave-placeholder">Đang chờ làn sóng tiếp theo...</div>';
       return;

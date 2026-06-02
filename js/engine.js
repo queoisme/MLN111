@@ -19,7 +19,8 @@ const Game = (() => {
       currentWaveIndex: 0,
       log: [],
       phase: 'DECISION',
-      passiveCapital: 0
+      passiveCapital: 0,
+      automateUsed: false
     };
   }
 
@@ -378,6 +379,7 @@ const Game = (() => {
       const buff = { ...action.buff };
       if (buff.permanent) {
         state.passiveCapital += buff.amount;
+        state.automateUsed = true;
         effectParts.push(`Tự động hóa: +${buff.amount} tài nguyên/ngày (thụ động)`);
       } else {
         state.activeBuffs.push(buff);
