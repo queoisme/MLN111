@@ -501,7 +501,22 @@ const AI = (() => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleOpponentSend(); }
     });
     document.querySelectorAll('#opponent-starters .ai-starter-btn').forEach(btn => {
-      btn.addEventListener('click', () => { input.value = btn.dataset.prompt || ''; handleOpponentSend(); });
+      btn.addEventListener('click', async () => {
+        const label = btn.textContent.trim();
+        const starters = document.getElementById('opponent-starters');
+        if (starters) starters.style.display = 'none';
+
+        const typingEl = appendOpponentMsg('ai', '…', true);
+        const trigger = `[Người chơi muốn nghe lời ${label.toLowerCase()} từ phía ngươi. Hãy nói 1-2 câu sắc bén, đúng nhân vật.]`;
+        opponentHistory.push({ role: 'user', content: trigger });
+        const { content, error } = await callAPI(opponentHistory, opponentContext, 'opponent-chat');
+        typingEl.remove();
+        const reply = content || `⚠️ Lỗi: ${error}`;
+        appendOpponentMsg('ai', reply);
+        opponentHistory.push({ role: 'assistant', content: reply });
+        opponentConvo.push({ role: 'assistant', content: reply });
+        if (typeof Voice !== 'undefined') Voice.speak(reply, 'opponent');
+      });
     });
 
     if (initialPrompt) { input.value = initialPrompt; handleOpponentSend(); }
