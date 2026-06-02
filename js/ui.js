@@ -264,17 +264,22 @@ const UI = (() => {
       return a && a.availableFrom <= state.day;
     });
 
+    const paidSelected = state.selectedActions
+      .filter(id => Object.keys(ACTIONS[id].cost).length > 0).length;
+
     container.innerHTML = availableIds.map(id => {
       const action = ACTIONS[id];
+      const isFree = Object.keys(action.cost).length === 0;
       const isSelected = state.selectedActions.includes(id);
       const isDisabled = !isSelected && !canAfford(action, state);
-      const isMaxed = !isSelected && state.selectedActions.length >= 2;
+      const isMaxed = !isSelected && !isFree && paidSelected >= 2;
 
       const costText = buildCostText(action);
       return `
-        <div class="action-card${isSelected ? ' selected' : ''}${(isDisabled || isMaxed) ? ' disabled' : ''}"
+        <div class="action-card${isSelected ? ' selected' : ''}${(isDisabled || isMaxed) ? ' disabled' : ''}${isFree ? ' free-action' : ''}"
              onclick="Game.toggleAction('${id}')"
              title="${action.flavorText}">
+          ${isFree ? '<div class="action-card-free-badge">+</div>' : ''}
           <div class="action-card-icon">${action.icon}</div>
           <div class="action-card-name">${action.name}</div>
           <div class="action-card-cost">${costText}</div>
@@ -284,7 +289,7 @@ const UI = (() => {
 
     renderSelectedPreview(state);
     document.getElementById('actions-remaining').textContent =
-      `Đã chọn: ${state.selectedActions.length}/2`;
+      `Chọn: ${paidSelected}/2 · miễn phí: tự do`;
   }
 
   function canAfford(action, state) {

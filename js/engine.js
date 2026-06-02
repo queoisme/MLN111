@@ -91,18 +91,25 @@ const Game = (() => {
   }
 
   // ── Decision Phase ─────────────────────────────────────────
+  function isFreeAction(action) {
+    return Object.keys(action.cost).length === 0;
+  }
+
+  function countPaidSelected() {
+    return state.selectedActions.filter(id => !isFreeAction(ACTIONS[id])).length;
+  }
+
   function toggleAction(actionId) {
     if (state.phase !== 'DECISION') return;
 
+    const action = ACTIONS[actionId];
     const idx = state.selectedActions.indexOf(actionId);
+
     if (idx !== -1) {
       state.selectedActions.splice(idx, 1);
     } else {
-      if (state.selectedActions.length >= 2) return;
-
-      const action = ACTIONS[actionId];
+      if (!isFreeAction(action) && countPaidSelected() >= 2) return;
       if (!canAfford(action)) return;
-
       state.selectedActions.push(actionId);
     }
     UI.renderActionCards(state);

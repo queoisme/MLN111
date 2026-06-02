@@ -699,6 +699,25 @@ html, body {
   filter: grayscale(0.6);
   pointer-events: none;
 }
+.action-card.free-action {
+  border-color: var(--teal);
+  border-style: dashed;
+}
+.action-card.free-action.selected {
+  border-style: solid;
+  border-color: var(--teal);
+  box-shadow: 0 0 12px rgba(42,157,143,0.3);
+}
+.action-card-free-badge {
+  position: absolute;
+  top: 5px; right: 6px;
+  font-size: 0.58rem;
+  font-family: monospace;
+  letter-spacing: 0.08em;
+  color: var(--teal);
+  font-weight: bold;
+  line-height: 1;
+}
 .action-card-icon { font-size: 1.3rem; }
 .action-card-name { font-size: 0.75rem; font-weight: bold; color: var(--white); line-height: 1.2; }
 .action-card-cost {
