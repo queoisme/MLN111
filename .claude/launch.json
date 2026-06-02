@@ -5,7 +5,8 @@
       "name": "barricades",
       "runtimeExecutable": "node",
       "runtimeArgs": ["server.js"],
-      "port": 3132
+      "port": 3132,
+      "autoPort": false
     }
   ]
 }
