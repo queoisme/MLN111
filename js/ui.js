@@ -305,7 +305,7 @@ const UI = (() => {
       const meta = STAT_META[stat];
       parts.push(`<span class="cost-val">-${cost}</span> ${meta.label}`);
     }
-    return parts.length ? parts.join(', ') : 'Miễn phí';
+    return parts.join(', ');
   }
 
   function renderSelectedPreview(state) {

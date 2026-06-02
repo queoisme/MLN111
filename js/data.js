@@ -71,7 +71,7 @@ const ACTIONS = {
   negotiate: {
     id: 'negotiate', name: 'Đàm Phán', icon: '🤝',
     cost: {}, effect: { legitimacy: 10, morale: -5 },
-    description: 'Miễn phí. Chính danh +10, tinh thần -5.',
+    description: 'Chính danh +10, tinh thần -5.',
     flavorText: 'Mỗi thỏa hiệp đều có giá — câu hỏi là ai trả và ai chịu.',
     availableFrom: 2
   },
