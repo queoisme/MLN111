@@ -289,7 +289,7 @@ const UI = (() => {
 
     renderSelectedPreview(state);
     document.getElementById('actions-remaining').textContent =
-      `Chọn: ${paidSelected}/2 · miễn phí: tự do`;
+      `Chọn ${paidSelected}/2`;
   }
 
   function canAfford(action, state) {
