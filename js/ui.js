@@ -367,19 +367,19 @@ const UI = (() => {
       const met = cur >= m.threshold;
       return `<div class="wave-mit-row ${met ? 'mit-met' : 'mit-unmet'}">
         ${STAT_META[m.stat].icon} ${STAT_META[m.stat].label} >= ${m.threshold} -> -${Math.round(m.reduction * 100)}%
-        <span class="mit-cur">[${cur}] ${met ? 'OK' : 'THIEU'}</span>
+        <span class="mit-cur">[${cur}] ${met ? 'OK' : 'THIẾU'}</span>
       </div>`;
     }).join('');
 
     const defenseSection = mitigatorRows
       ? `<div class="wave-defense-section">
-           <div class="wave-defense-label">Phong Thu</div>
+           <div class="wave-defense-label">Phòng Thủ</div>
            ${mitigatorRows}
          </div>`
       : '';
 
     const extra = upcoming.length > 1
-      ? `<div class="wave-next">+${upcoming.length - 1} lan song nua hom nay</div>`
+      ? `<div class="wave-next">+${upcoming.length - 1} làn sóng nữa hôm nay</div>`
       : '';
 
     content.innerHTML = `
