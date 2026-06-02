@@ -1797,10 +1797,10 @@ html, body {
 /* ── LOG IMAGE BANNER ─────────────────────────────────────── */
 .log-image-banner {
   width: 100%;
-  height: 130px;
+  height: 110px;
   position: relative;
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: 4px;
   flex-shrink: 0;
   animation: fadeSlideIn 0.4s ease;
 }
@@ -1809,8 +1809,8 @@ html, body {
   inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
-  opacity: 0.45;
-  mix-blend-mode: luminosity;
+  object-position: center 30%;
+  opacity: 0.62;
 }
 .log-banner-overlay {
   position: absolute;
@@ -1818,22 +1818,47 @@ html, body {
   display: flex;
   align-items: flex-end;
   padding: 10px 14px;
-  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 65%);
+  background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.18) 55%, transparent 100%);
 }
 .log-banner-label {
   font-family: monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.88);
-  text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0,0,0,1);
 }
 
-/* Day-end banner */
+/* Wave banners — đỏ trái */
+.log-image-banner[data-type="wave"] {
+  height: 120px;
+  border-left: 3px solid rgba(230,57,70,0.7);
+}
+.log-image-banner[data-type="wave"] .log-banner-label { color: #ff9aa0; }
+
+/* Event banners — vàng trái */
+.log-image-banner[data-type="event"] {
+  border-left: 3px solid rgba(233,196,106,0.6);
+}
+.log-image-banner[data-type="event"] .log-banner-label { color: #f4d580; }
+
+/* Day-start banners — trắng nhạt */
+.log-image-banner[data-type="day-start"] {
+  height: 90px;
+  border-left: 3px solid rgba(255,255,255,0.18);
+}
+
+/* Day-end — separator nhỏ gọn */
 .log-image-banner[data-type="day-end"] {
-  height: 60px;
-  background: linear-gradient(180deg, #080810 0%, #030308 100%);
-  border: 1px solid rgba(255,255,255,0.04);
+  height: 36px;
+  background: linear-gradient(180deg, #0a0a14 0%, #050508 100%);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 2px;
+}
+.log-image-banner[data-type="day-end"] .log-banner-label {
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.25em;
 }
 
 /* Day-start banners — reuse dt-visual gradient patterns */
