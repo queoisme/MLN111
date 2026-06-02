@@ -340,6 +340,11 @@ const Game = (() => {
 
       scheduleWaves();
       UI.updateWavePanel(state);
+
+      if (typeof AI !== 'undefined') {
+        AI.autoNewDay(state);
+        setTimeout(() => AI.opponentAutoNewDay(state), 2500);
+      }
     });
   }
 

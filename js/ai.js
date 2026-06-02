@@ -570,9 +570,38 @@ const AI = (() => {
     return el;
   }
 
+  // ── Proactive day-start dialogue ─────────────────────────
+  async function autoNewDay(state) {
+    const ctx = buildCtx(state);
+    const avg = Math.round(
+      (state.stats.morale + state.stats.capital + state.stats.control + state.stats.legitimacy) / 4
+    );
+    const trend = avg >= 60 ? 'đang ở thế mạnh' : avg >= 40 ? 'tình hình ổn định' : 'đang yếu thế';
+    const prompt = `Ngày ${state.day}/7 vừa bắt đầu. Phe ${ctx.faction} ${trend} (chỉ số trung bình: ${avg}/100). Nhận định ngắn về tình hình và ưu tiên cần làm hôm nay — 2-3 câu, tự nhiên, không liệt kê.`;
+    const { content } = await callAPI([{ role: 'user', content: prompt }], ctx, 'auto');
+    if (content) receiveAdvisorMessage(content, `Cố Vấn · Ngày ${state.day}`, ctx);
+  }
+
+  async function opponentAutoNewDay(state) {
+    const ctx = buildCtx(state);
+    const oppName = opponentFactionName(state);
+    const avg = Math.round(
+      (state.stats.morale + state.stats.capital + state.stats.control + state.stats.legitimacy) / 4
+    );
+    const playerStrong = avg >= 55;
+    const prompt = `Ngày ${state.day}/7 bắt đầu. Đối thủ của ta ${playerStrong ? 'đang chiếm ưu thế' : 'đang suy yếu'}. Hãy nói 1-2 câu đúng nhân vật ${oppName} để mở đầu ngày mới — sắc bén, cảm xúc.`;
+    const { content } = await callAPI([{ role: 'user', content: prompt }], ctx, 'opponent');
+    if (content) {
+      opponentHistory.push({ role: 'assistant', content });
+      opponentConvo.push({ role: 'assistant', content, label: oppName });
+      receiveOpponentMessage(content, oppName, ctx);
+    }
+  }
+
   return {
     autoAfterWave, flushPendingAuto, autoAfterEvent, openChat, closeChat, buildCtx,
     opponentAutoAfterWave, flushOpponentAuto, openOpponentChat, closeOpponentChat,
+    autoNewDay, opponentAutoNewDay,
     resetMessages
   };
 })();
