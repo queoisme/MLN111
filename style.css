@@ -415,8 +415,8 @@ html, body {
 .wave-incoming {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 12px;
+  gap: 8px;
+  padding: 10px;
   border: 1px solid #2a3556;
   border-left: 3px solid #e63946;
   border-radius: 8px;
@@ -428,22 +428,22 @@ html, body {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 .wave-icon {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
-  font-size: 1.5rem;
-  border-radius: 10px;
+  font-size: 1.2rem;
+  border-radius: 8px;
   background: linear-gradient(180deg, #3a1a24 0%, #1e1828 100%);
   border: 1px solid #5a2a3a;
   flex-shrink: 0;
 }
 .wave-title-wrap { min-width: 0; }
 .wave-name {
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-weight: bold;
   color: #ff5d73;
   line-height: 1.2;
@@ -492,27 +492,27 @@ html, body {
 .wave-incoming-damages {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 5px;
 }
 .wave-dmg-row {
   background: rgba(10, 12, 30, 0.6);
   border: 1px solid #1e2848;
-  border-radius: 6px;
-  padding: 8px 10px 10px;
+  border-radius: 5px;
+  padding: 6px 8px 7px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 .wave-dmg-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-family: monospace;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   gap: 8px;
 }
 .wave-dmg-track {
-  height: 8px;
+  height: 6px;
   border-radius: 999px;
   overflow: hidden;
   background: #0e1230;
@@ -534,25 +534,25 @@ html, body {
 .wave-defense-section {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding-top: 10px;
+  gap: 4px;
+  padding-top: 8px;
   border-top: 1px solid #1e2848;
 }
 .wave-defense-label {
   font-family: monospace;
-  font-size: 0.58rem;
+  font-size: 0.56rem;
   color: #7880a8;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 .wave-mit-row {
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 8px;
-  border-radius: 5px;
+  gap: 5px;
+  padding: 4px 7px;
+  border-radius: 4px;
   font-family: monospace;
   line-height: 1.3;
 }

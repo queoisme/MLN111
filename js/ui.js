@@ -340,12 +340,12 @@ const UI = (() => {
     const totalDamage = Object.values(wave.damage)
       .reduce((sum, val) => sum + Math.abs(val), 0);
     const level = totalDamage >= 60
-      ? { label: 'Khan Cap', className: 'is-critical' }
+      ? { label: 'Khẩn Cấp', className: 'is-critical' }
       : totalDamage >= 40
-        ? { label: 'Rat Cao', className: 'is-high' }
+        ? { label: 'Rất Cao', className: 'is-high' }
         : totalDamage >= 25
           ? { label: 'Cao', className: 'is-mid' }
-          : { label: 'Vua', className: 'is-low' };
+          : { label: 'Vừa', className: 'is-low' };
 
     const dmgRows = Object.entries(wave.damage)
       .map(([s, v]) => {
@@ -396,6 +396,7 @@ const UI = (() => {
         ${defenseSection}
         ${extra}
       </div>`;
+    content.scrollTop = 0;
   }
 
   function clearLog() {
