@@ -65,7 +65,8 @@ const Game = (() => {
       addLog(`Phe ${faction.name} chuẩn bị chiến đấu. Ngày 1 bắt đầu.`, 'system');
       addLog(`Mục tiêu: Trụ vững 7 ngày trước các làn sóng khủng hoảng.`, 'system');
       const b1 = DAY_BRIEFINGS[1];
-      addLog(`[${b1.label}] ${b1.tip}`, 'briefing');
+      const b1tip = typeof b1.tip === 'object' ? (b1.tip[factionId] || b1.tip.proletariat) : b1.tip;
+      addLog(`[${b1.label}] ${b1tip}`, 'briefing');
       scheduleWaves();
     });
   }
