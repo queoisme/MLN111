@@ -635,6 +635,9 @@ const UI = (() => {
     if (existing) existing.remove();
 
     const briefing   = DAY_BRIEFINGS[day];
+    const tipText    = typeof briefing.tip === 'object'
+      ? (briefing.tip[factionId] || briefing.tip.proletariat)
+      : briefing.tip;
     const narrative  = NARRATIVE.dailyNarrative[factionId]?.[day];
     const schedule   = WAVE_SCHEDULE[day] || [];
     const waveData   = schedule.map(id => WAVES[id]).filter(Boolean);
@@ -672,7 +675,7 @@ const UI = (() => {
         ${narrativeHtml}
         <div class="dt-tip-box">
           <div class="dt-tip-label">Gợi ý chiến lược</div>
-          <div class="dt-tip-text">${briefing.tip}</div>
+          <div class="dt-tip-text">${tipText}</div>
         </div>
         ${wavesHtml}
         <button class="btn-primary" id="dt-continue-btn">Bắt Đầu →</button>
