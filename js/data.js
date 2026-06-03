@@ -467,13 +467,48 @@ const EVENTS = [
 ];
 
 const DAY_BRIEFINGS = {
-  1: { label: 'Giờ Đầu Tiên',     tip: 'Đình công bùng nổ ngay ngày đầu. Kiểm tra wave panel — nếu Tinh Thần ≥ 60 và Chính Danh ≥ 60, bạn sẽ giảm được 70% thiệt hại. Ưu tiên hành động rẻ và xây dựng nền tảng.' },
-  2: { label: 'Leo Thang',          tip: 'Đàn áp nhắm vào Tinh Thần và Chính Danh. Nếu Tài Nguyên ≥ 50 hoặc Kiểm Soát ≥ 60, thiệt hại giảm đáng kể. Hành động ngay trước khi kết thúc lượt.' },
-  3: { label: 'Hai Mặt Trận',      tip: 'Phá hoại kèm Chiến Tranh Truyền Thông — tài nguyên và hình ảnh bị tấn công đồng thời. Không thể bảo vệ tất cả mọi thứ: hãy chọn điều quan trọng hơn.' },
-  4: { label: 'Điểm Gãy',          tip: 'Đây là ngày nhiều người buông bỏ. Hai wave, hai hướng tấn công. Giữ tất cả các chỉ số trên 30 — dưới ngưỡng đó, mọi thứ bắt đầu sụp đổ theo dây chuyền.' },
-  5: { label: 'Tổng Lực',          tip: 'Tổng Đình Công Toàn Thành — wave mạnh nhất từ đầu game, đánh cả 3 chỉ số. Cần Chính Danh ≥ 65 hoặc Tinh Thần ≥ 70 để giảm thiểu. Đây là khoảnh khắc quyết định giữa trận.' },
-  6: { label: 'Đêm Trước Bão',     tip: 'Khủng hoảng Chính Trị kèm Phá Hoại. Buff tích lũy từ hôm nay sẽ hỗ trợ ngày cuối — đây là lượt đầu tư cuối cùng trước khi tất cả được quyết định.' },
-  7: { label: 'Ngày Quyết Định',   tip: 'Ba wave với toàn bộ sức mạnh cùng lúc. Mọi buff, mọi mitigator đều có giá trị nhân đôi hôm nay. Không còn cơ hội sửa sai — mọi thứ phụ thuộc vào những quyết định bạn đã đưa ra.' }
+  1: { label: 'Giờ Đầu Tiên',
+    tip: {
+      proletariat: 'Đình công bùng nổ ngay ngày đầu. Tinh Thần ≥ 60 và Chính Danh ≥ 60 sẽ giảm 70% thiệt hại — bạn khởi đầu đủ mạnh nếu giữ được cả hai. Ưu tiên hành động rẻ, xây nền tảng.',
+      bourgeoisie: 'Làn sóng đình công mở màn. Tinh Thần và Chính Danh của bạn thấp hơn ngưỡng phòng thủ — thiệt hại ban đầu sẽ cao. Dùng hire_security hoặc media_campaign để đẩy chỉ số lên ngay.'
+    }
+  },
+  2: { label: 'Leo Thang',
+    tip: {
+      proletariat: 'Đàn áp bạo lực nhắm vào Tinh Thần và Chính Danh. Tài Nguyên ≥ 50 hoặc Kiểm Soát ≥ 60 sẽ giảm đáng kể thiệt hại. Đừng để cả hai cùng thấp.',
+      bourgeoisie: 'Đàn áp là wave của bạn — nhưng nó cũng tốn Kiểm Soát. Duy trì Tài Nguyên ≥ 50 để giảm thiệt. Đây là lúc đầu tư vào an ninh và truyền thông sinh lợi nhất.'
+    }
+  },
+  3: { label: 'Hai Mặt Trận',
+    tip: {
+      proletariat: 'Phá hoại cơ sở kèm Chiến Tranh Truyền Thông — tài nguyên và hình ảnh bị tấn công cùng lúc. Báo Chí Ngầm giúp phòng thủ truyền thông. Chọn điều quan trọng hơn để bảo vệ.',
+      bourgeoisie: 'Phá hoại và truyền thông tấn công cùng lúc. Kiểm Soát ≥ 50 giảm phá hoại, Tài Nguyên ≥ 55 giảm truyền thông. propaganda_blitz hoặc hire_security là lựa chọn then chốt hôm nay.'
+    }
+  },
+  4: { label: 'Điểm Gãy',
+    tip: {
+      proletariat: 'Hai wave liên tiếp, hai hướng tấn công. Giữ tất cả chỉ số trên 30 — dưới ngưỡng đó mọi thứ sụp đổ theo dây chuyền. Đặc biệt đừng để Tinh Thần chạm đáy.',
+      bourgeoisie: 'Hai wave hôm nay nhắm vào điểm yếu cốt lõi của bạn. Chính Danh ≤ 0 là thua ngay — ưu tiên bảo vệ Chính Danh trước. Kiểm Soát và Tài Nguyên là lá chắn quan trọng.'
+    }
+  },
+  5: { label: 'Tổng Lực',
+    tip: {
+      proletariat: 'Tổng Đình Công Toàn Thành — wave mạnh nhất, đánh cả 3 chỉ số. Chính Danh ≥ 65 hoặc Tinh Thần ≥ 70 để kích hoạt phòng thủ. Đây là khoảnh khắc quyết định giữa trận.',
+      bourgeoisie: 'Tổng Đình Công là thách thức lớn nhất giữa game. Chính Danh và Tinh Thần của bạn thường thấp — khó đạt ngưỡng giảm thiểu. infiltrate hoặc emergency_decree cần được dùng hôm nay.'
+    }
+  },
+  6: { label: 'Đêm Trước Bão',
+    tip: {
+      proletariat: 'Khủng Hoảng Chính Trị kèm Phá Hoại. Buff tích lũy từ hôm nay sẽ sống sót sang ngày 7 — đây là lượt đầu tư cuối cùng trước khi tất cả được quyết định.',
+      bourgeoisie: 'Khủng Hoảng Chính Trị đe dọa Chính Danh — điều bạn không thể để về 0. political_deal hôm nay sẽ giảm 55% thiệt hại ngày mai. Đây là thời điểm quan trọng nhất để đầu tư.'
+    }
+  },
+  7: { label: 'Ngày Quyết Định',
+    tip: {
+      proletariat: 'Ba wave cùng lúc với toàn bộ sức mạnh. Mọi buff, mọi mitigator đều có giá trị nhân đôi. Đình Công + Đàn Áp + Tổng Đình Công — chuẩn bị phòng thủ đa tầng hoặc chấp nhận thiệt hại nặng.',
+      bourgeoisie: 'Ngày quyết định: ba wave toàn lực. Tài Nguyên và Chính Danh cả hai đều là điều kiện thua — đừng để một trong hai về 0. Dùng buff cuối cùng, không giữ lại bất cứ thứ gì.'
+    }
+  }
 };
 
 const BUFF_LABELS = {

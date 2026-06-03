@@ -188,6 +188,16 @@ const Game = (() => {
 
     UI.showScreen('game');
     UI.appendLogBanner('event', event.id, event.title, state.day);
+
+    // Check lose condition after event effects
+    const faction = FACTIONS[state.faction];
+    for (const [stat, threshold] of Object.entries(faction.loseConditions)) {
+      if (state.stats[stat] <= threshold) {
+        setTimeout(() => triggerGameOver(false, stat), 400);
+        return;
+      }
+    }
+
     startNextWave();
   }
 
@@ -336,12 +346,16 @@ const Game = (() => {
       const dayNarrative = NARRATIVE.dailyNarrative[state.faction]?.[state.day];
       if (dayNarrative) addLog(dayNarrative, 'narrative');
 
+      const tip = typeof briefing.tip === 'object'
+        ? (briefing.tip[state.faction] || briefing.tip.proletariat)
+        : briefing.tip;
+
       if (state.day === 7) {
         document.getElementById('screen-game').classList.add('day-final');
-        addLog(`⚠ [${briefing.label}] ${briefing.tip}`, 'briefing');
+        addLog(`⚠ [${briefing.label}] ${tip}`, 'briefing');
       } else {
         addLog(`Ngày ${state.day} bắt đầu.`, 'system');
-        addLog(`[${briefing.label}] ${briefing.tip}`, 'briefing');
+        addLog(`[${briefing.label}] ${tip}`, 'briefing');
       }
 
       scheduleWaves();
