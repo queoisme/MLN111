@@ -545,7 +545,10 @@ const AI = (() => {
     input.style.height = '';
 
     appendOpponentMsg('user', text);
-    opponentHistory.push({ role: 'user', content: text });
+    // Prefix với faction để AI không bị lẫn lộn vai
+    const playerFaction = opponentContext?.faction || 'người chơi';
+    const contextMsg = `[${playerFaction} nói:] ${text}`;
+    opponentHistory.push({ role: 'user', content: contextMsg });
     opponentConvo.push({ role: 'user', content: text });
 
     const typingEl = appendOpponentMsg('ai', '…', true);
