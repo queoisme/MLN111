@@ -156,8 +156,8 @@ const Game = (() => {
       state.pendingWaves = [];
     }
 
-    // Check for event
-    const event = EVENTS.find(e => e.day === state.day);
+    // Check for event (faction-specific)
+    const event = EVENTS.find(e => e.day === state.day && e.faction === state.faction);
     if (event && !state.shownEvents) {
       state.shownEvents = state.shownEvents || {};
     }

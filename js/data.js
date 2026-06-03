@@ -325,78 +325,143 @@ const WAVE_SCHEDULE = {
 };
 
 const EVENTS = [
+
+  // ── VÔ SẢN ────────────────────────────────────────────────
   {
-    id: 'first_blood',
-    day: 1,
+    id: 'first_blood', faction: 'proletariat', day: 1,
     title: 'Tiếng Vang Đầu Tiên',
-    text: 'Một nhóm công nhân trẻ đang chờ bên ngoài trụ sở — họ muốn hành động ngay hôm nay, không cần kế hoạch dài hạn. Phần còn lại của tổ chức nhìn vào bạn và chờ đợi quyết định.',
+    text: 'Một nhóm công nhân trẻ đang tập hợp trước cổng xưởng số 3 — họ muốn đình công ngay hôm nay, không cần kế hoạch dài hạn. Ban chấp hành công đoàn nhìn vào bạn và chờ quyết định. Nếu bạn ra lệnh dừng lại, khí thế có thể tắt. Nếu để họ đi, rủi ro vượt tầm kiểm soát.',
     choices: [
-      { label: 'Để họ hành động — khí thế quan trọng hơn', effect: { morale: 15, control: -8, legitimacy: -5 } },
-      { label: 'Kiềm chế — đây chưa phải thời điểm', effect: { morale: -8, legitimacy: 10, capital: 5 } }
+      { label: 'Để họ hành động — ngọn lửa đầu tiên quan trọng hơn kỷ luật', effect: { morale: 15, control: -8, legitimacy: -5 } },
+      { label: 'Kiềm chế — xây nền tảng trước khi leo thang', effect: { morale: -8, legitimacy: 10, capital: 5 } }
     ]
   },
   {
-    id: 'neutral_observer',
-    day: 2,
+    id: 'neutral_observer', faction: 'proletariat', day: 2,
     title: 'Nhà Báo Điều Tra',
-    text: 'Một nhà báo độc lập đã tìm được cách tiếp cận bạn. Cô ta không thuộc phe nào — nhưng bài viết của cô sẽ được đọc bởi hàng chục nghìn người. Phản ứng của bạn hôm nay sẽ định hình câu chuyện mà công luận nghe.',
+    text: 'Một nhà báo độc lập đã lén tiếp cận trụ sở công đoàn. Cô ta đang điều tra điều kiện lao động tại các khu công nghiệp — bài viết sẽ được đọc bởi hàng chục nghìn người. Nhưng cô ta sẽ viết những gì bạn cho cô thấy.',
     choices: [
-      { label: 'Tiếp đón cởi mở, cung cấp bằng chứng', effect: { legitimacy: 18, capital: -8, morale: 5 } },
-      { label: 'Tiếp nhưng kiểm soát thông tin', effect: { legitimacy: 8, capital: -3 } },
-      { label: 'Từ chối — không tin bất kỳ ai bên ngoài', effect: { legitimacy: -8, morale: 5 } }
+      { label: 'Tiếp đón cởi mở — cung cấp bằng chứng và nhân chứng', effect: { legitimacy: 18, capital: -8, morale: 5 } },
+      { label: 'Tiếp nhưng kiểm soát thông điệp', effect: { legitimacy: 8, capital: -3 } },
+      { label: 'Từ chối — báo chí tư sản không bao giờ vô tư', effect: { legitimacy: -8, morale: 5 } }
     ]
   },
   {
-    id: 'betrayal',
-    day: 3,
+    id: 'betrayal', faction: 'proletariat', day: 3,
     title: 'Kẻ Phản Bội Trong Hàng Ngũ',
-    text: 'Tình báo nội bộ xác nhận: một thành viên ban chấp hành đã cung cấp thông tin cho phía đối lập. Chưa rõ bao nhiêu đã bị tiết lộ. Bạn cần quyết định ngay — mỗi giờ chờ đợi là thêm một rủi ro.',
+    text: 'Mạng lưới liên lạc bí mật phát hiện: một ủy viên ban chấp hành đã cung cấp danh sách tổ chức và kế hoạch hành động cho chủ xưởng. Chưa rõ bao nhiêu đã bị lộ. Mỗi giờ trôi qua là thêm một cuộc đột kích có thể xảy ra.',
     choices: [
-      { label: 'Đối chất công khai trước tổ chức', effect: { morale: 12, legitimacy: -10, control: 8 } },
-      { label: 'Xử lý kín — cô lập khỏi thông tin nhạy cảm', effect: { control: 15, morale: -5, capital: -5 } },
-      { label: 'Bỏ qua — không đủ bằng chứng chắc chắn', effect: { capital: 8, morale: -12, legitimacy: -5 } }
+      { label: 'Đối chất công khai — đoàn kết đòi hỏi minh bạch', effect: { morale: 12, legitimacy: -10, control: 8 } },
+      { label: 'Xử lý kín — cô lập khỏi thông tin, không tạo hoảng loạn', effect: { control: 15, morale: -5, capital: -5 } },
+      { label: 'Bỏ qua — cáo buộc mà không có bằng chứng sẽ chia rẽ nội bộ', effect: { capital: 8, morale: -12, legitimacy: -5 } }
     ]
   },
   {
-    id: 'defection',
-    day: 4,
-    title: 'Đào Ngũ Nội Bộ',
-    text: 'Một thành viên chủ chốt — người phụ trách liên lạc với ba khu vực quan trọng — đang cân nhắc rời bỏ. Anh ta kiệt sức, nghi ngờ kết quả, và nhận được lời đề nghị từ phía đối lập. Bạn có ít hơn một ngày để phản ứng.',
+    id: 'defection', faction: 'proletariat', day: 4,
+    title: 'Người Lung Lay',
+    text: 'Trưởng ban liên lạc — người nắm mạng lưới ba khu vực công nghiệp phía bắc — đang cân nhắc rút lui. Anh ta kiệt sức, vợ con bị đe dọa, và chủ xưởng vừa đề nghị một "thỏa thuận riêng". Bạn có ít hơn một ngày.',
     choices: [
-      { label: 'Thuyết phục bằng viễn cảnh và lý tưởng', effect: { morale: 12, capital: -10, legitimacy: 5 } },
-      { label: 'Đề xuất điều kiện tốt hơn — thực dụng', effect: { morale: 5, capital: -15 } },
-      { label: 'Để anh ta đi — ưu tiên những người còn lại', effect: { morale: -15, control: 12, capital: 5 } }
+      { label: 'Thuyết phục bằng lý tưởng — anh ta hiểu ý nghĩa của cuộc đấu này', effect: { morale: 12, capital: -10, legitimacy: 5 } },
+      { label: 'Đề xuất hỗ trợ gia đình anh ta từ quỹ đoàn kết', effect: { morale: 5, capital: -15 } },
+      { label: 'Để anh ta đi — đừng để một người giữ quá nhiều quyền lực', effect: { morale: -15, control: 12, capital: 5 } }
     ]
   },
   {
-    id: 'outside_support',
-    day: 5,
-    title: 'Hỗ Trợ Từ Bên Ngoài',
-    text: 'Một tổ chức quốc tế với nguồn lực đáng kể đề nghị hỗ trợ. Tiền sẽ đến ngay hôm nay. Nhưng cái giá là hình ảnh: một số người sẽ gọi đây là "can thiệp từ bên ngoài" và dùng nó chống lại bạn.',
+    id: 'outside_support', faction: 'proletariat', day: 5,
+    title: 'Liên Đới Quốc Tế',
+    text: 'Quốc tế Công nhân tại Amsterdam gửi đại diện đến: họ đề nghị tài trợ khẩn cấp cho quỹ đình công — đủ để trụ thêm nhiều ngày. Nhưng phía chủ xưởng đang chờ đợi điều này. Nếu bạn nhận, họ sẽ gọi đây là "bàn tay nước ngoài phá hoại kinh tế quốc gia".',
     choices: [
-      { label: 'Nhận hỗ trợ — nguồn lực là sống còn', effect: { capital: 25, legitimacy: -12, morale: 5 } },
-      { label: 'Nhận một phần, công khai hóa thỏa thuận', effect: { capital: 12, legitimacy: -3 } },
-      { label: 'Từ chối — tự lực cánh sinh đến cùng', effect: { morale: 15, legitimacy: 8, capital: -5 } }
+      { label: 'Nhận toàn bộ — đoàn kết không có biên giới', effect: { capital: 25, legitimacy: -12, morale: 5 } },
+      { label: 'Nhận một phần, công khai hóa thỏa thuận để vô hiệu hóa đòn tuyên truyền', effect: { capital: 12, legitimacy: -3 } },
+      { label: 'Từ chối — phong trào này phải thắng bằng sức mạnh của chính mình', effect: { morale: 15, legitimacy: 8, capital: -5 } }
     ]
   },
   {
-    id: 'eve_of_battle',
-    day: 6,
-    title: 'Đêm Trước Ngày Quyết Định',
-    text: 'Đêm nay, một thỏa thuận ngừng chiến bất ngờ được đề xuất qua trung gian. Hai bên sẽ dừng mọi hành động trong 48 giờ để đàm phán. Đây có thể là cơ hội — hoặc là bẫy được giăng ra trước ngày cuối cùng.',
+    id: 'eve_of_battle', faction: 'proletariat', day: 6,
+    title: 'Đêm Trước Bão',
+    text: 'Phía chủ xưởng bất ngờ đề xuất qua trung gian: ngừng mọi hành động 48 giờ để đàm phán. Đây là lần đầu tiên họ chịu ngồi vào bàn. Nhưng đó có thể là chiến thuật câu giờ trước ngày cuối cùng — và một số anh em trong đoàn đã sẵn sàng.',
     choices: [
-      { label: 'Chấp nhận ngừng chiến — tích lũy sức mạnh', effect: { capital: 15, morale: 8, control: -10, legitimacy: -5 } },
-      { label: 'Từ chối — không tin vào thỏa thuận giờ chót', effect: { morale: 15, legitimacy: 10, capital: -8 } }
+      { label: 'Chấp nhận — dùng thời gian để tái tổ chức và bổ sung lực lượng', effect: { capital: 15, morale: 8, control: -10, legitimacy: -5 } },
+      { label: 'Từ chối — động lực là tất cả, dừng lại bây giờ là đánh mất đà tiến', effect: { morale: 15, legitimacy: 10, capital: -8 } }
     ]
   },
   {
-    id: 'final_gambit',
-    day: 7,
+    id: 'final_gambit', faction: 'proletariat', day: 7,
     title: 'Nước Đi Cuối Cùng',
-    text: 'Vào đúng ngày quyết định, một lá bài bất ngờ được tung ra: phía đối lập đề xuất nhượng bộ một phần đổi lấy việc bạn không leo thang thêm. Đây là khoảnh khắc mà mọi thứ trước đây dẫn đến — nhưng câu trả lời không đơn giản như nó có vẻ.',
+    text: 'Vào đúng ngày quyết định: chủ xưởng đồng ý nhượng bộ một phần — ngày làm việc 10 tiếng thay vì 12, tăng lương 8%. Không phải tất cả những gì đoàn yêu cầu. Nhưng đây là lần đầu tiên họ lùi. Chấp nhận hay tiếp tục — cả hai đều có giá.',
     choices: [
-      { label: 'Chấp nhận nhượng bộ một phần — bảo toàn tổ chức', effect: { morale: -10, capital: 20, legitimacy: 15, control: 5 } },
-      { label: 'Từ chối — tất cả hoặc không có gì', effect: { morale: 20, legitimacy: -10, capital: -10 } }
+      { label: 'Chấp nhận — bảo toàn tổ chức, thắng lợi từng bước', effect: { morale: -10, capital: 20, legitimacy: 15, control: 5 } },
+      { label: 'Từ chối — tám tiếng, lương đầy đủ, hoặc không có gì', effect: { morale: 20, legitimacy: -10, capital: -10 } }
+    ]
+  },
+
+  // ── TƯ SẢN ────────────────────────────────────────────────
+  {
+    id: 'bourg_unrest', faction: 'bourgeoisie', day: 1,
+    title: 'Bóng Đen Nổi Loạn',
+    text: 'Sáng sớm. Báo cáo từ quản đốc: công nhân xưởng số 3 tập hợp trước cổng, từ chối vào ca. Ủy ban đình công đang phát tờ rơi. Quản đốc nói tình hình "vẫn kiểm soát được" — nhưng chờ thêm một giờ là rủi ro lan sang các xưởng khác.',
+    choices: [
+      { label: 'Điều lực lượng bảo vệ tư nhân — dập tắt trước khi lan rộng', effect: { control: 15, legitimacy: -10, morale: 8 } },
+      { label: 'Đề nghị tăng lương nhỏ — chia rẽ những người do dự', effect: { capital: -15, legitimacy: 10, control: -5 } },
+      { label: 'Quan sát và ghi nhận — không phản ứng thái quá', effect: { morale: -8, legitimacy: 5, capital: 5 } }
+    ]
+  },
+  {
+    id: 'bourg_press', faction: 'bourgeoisie', day: 2,
+    title: 'Trận Chiến Thông Tin',
+    text: 'Chủ bút tờ Nhật Báo Công Thương — người bạn cũ — gọi điện: câu chuyện về công nhân đang được độc giả đón nhận. Nếu không có gì từ phía bạn, bài xã luận ngày mai sẽ đặt câu hỏi về "trách nhiệm xã hội của giới chủ". Ông ta có thể điều chỉnh — với điều kiện thích hợp.',
+    choices: [
+      { label: 'Tài trợ cho loạt bài về "sự phát triển kinh tế và ổn định xã hội"', effect: { capital: -18, legitimacy: 20, morale: 5 } },
+      { label: 'Cung cấp phỏng vấn độc quyền — kiểm soát thông điệp', effect: { capital: -8, legitimacy: 10 } },
+      { label: 'Từ chối — mua chuộc báo chí là bẫy dài hạn', effect: { legitimacy: -12, morale: 5, capital: 8 } }
+    ]
+  },
+  {
+    id: 'bourg_spy', faction: 'bourgeoisie', day: 3,
+    title: 'Điệp Viên Trong Bóng Tối',
+    text: 'Luật sư của bạn thông báo kín: một người quen đã bố trí được một nhân vật đáng tin vào ủy ban đình công. Người này có thể cung cấp lịch họp, kế hoạch leo thang và tên các đầu mối chủ chốt. Nhưng nếu bị phát hiện — đây sẽ là vụ bê bối không thể kiểm soát.',
+    choices: [
+      { label: 'Khai thác triệt để — thông tin là vũ khí quyết định', effect: { control: 20, legitimacy: -12 } },
+      { label: 'Chỉ dùng để phòng thủ — biết trước để không bị bất ngờ', effect: { control: 10, legitimacy: -5 } },
+      { label: 'Cắt đứt liên hệ — rủi ro pháp lý và chính trị quá lớn', effect: { legitimacy: 10, morale: -8, control: -5 } }
+    ]
+  },
+  {
+    id: 'bourg_foreman', faction: 'bourgeoisie', day: 4,
+    title: 'Quản Đốc Hai Lòng',
+    text: 'Trưởng quản đốc nhà máy chính — người bạn đã tin tưởng suốt tám năm — vừa bị trông thấy tại cuộc họp công nhân. Vợ anh ta ký bản kiến nghị. Anh ta biết quá nhiều về quy trình sản xuất và lịch giao hàng. Bạn cần quyết định trước khi anh ta chọn phe.',
+    choices: [
+      { label: 'Tăng gấp đôi lương, hứa hẹn cổ phần — mua lại lòng trung thành', effect: { capital: -20, morale: 10, control: 5 } },
+      { label: 'Chuyển anh ta sang cơ sở tỉnh lẻ — loại bỏ khỏi trung tâm rủi ro', effect: { control: 12, morale: -8, legitimacy: -5 } },
+      { label: 'Đối mặt trực tiếp — yêu cầu anh ta chọn rõ ràng', effect: { morale: -5, legitimacy: 5, control: 5 } }
+    ]
+  },
+  {
+    id: 'bourg_gov', faction: 'bourgeoisie', day: 5,
+    title: 'Bàn Tay Chính Quyền',
+    text: 'Một quan chức cấp cao tỉnh gặp riêng bạn: nhà nước sẵn sàng điều cảnh sát "tái lập trật tự" — nhưng đổi lại, Hội Chủ Xưởng phải ủng hộ ứng viên của họ trong cuộc bầu cử tháng tới và chuyển một khoản "đóng góp vận động" không chính thức. Tất cả diễn ra trong bóng tối.',
+    choices: [
+      { label: 'Chấp nhận toàn bộ — đây là cách thế giới thực sự vận hành', effect: { capital: -25, control: 25, legitimacy: -10 } },
+      { label: 'Chỉ nhận hỗ trợ cảnh sát, từ chối dính líu bầu cử', effect: { capital: -12, control: 15, legitimacy: -5 } },
+      { label: 'Từ chối — lệ thuộc chính trị là con dao hai lưỡi', effect: { morale: 8, legitimacy: 12, control: -10 } }
+    ]
+  },
+  {
+    id: 'bourg_truce', faction: 'bourgeoisie', day: 6,
+    title: 'Đề Nghị Đình Chiến',
+    text: 'Thông qua trung gian, ủy ban đình công gửi thông điệp: nếu bạn tạm dừng lệnh đóng cửa nhà máy 48 giờ, họ sẽ trì hoãn "hành động toàn thành" dự kiến ngày mai. Đây có thể là dấu hiệu họ đang kiệt sức — hoặc chiến thuật câu giờ để tập hợp thêm lực lượng.',
+    choices: [
+      { label: 'Chấp nhận — dùng thời gian để củng cố phòng thủ và đàm phán pháp lý', effect: { capital: 15, control: -8, morale: -8 } },
+      { label: 'Từ chối và leo thang — dập tắt khi họ còn chưa sẵn sàng', effect: { morale: 12, control: 8, capital: -10, legitimacy: -8 } }
+    ]
+  },
+  {
+    id: 'bourg_final', faction: 'bourgeoisie', day: 7,
+    title: 'Canh Bạc Cuối Cùng',
+    text: 'Ngày quyết định. Công nhân kiệt sức nhưng chưa vỡ. Cố vấn pháp lý trình bày hai phương án: nhượng bộ giới hạn — ngày làm 10 tiếng, tăng lương nhỏ — nguy hiểm về mặt tiền lệ nhưng kiểm soát được. Hoặc đàn áp dứt điểm với sự hỗ trợ của chính quyền, kết thúc vĩnh viễn.',
+    choices: [
+      { label: 'Nhượng bộ có kiểm soát — thắng chiến tranh bằng cách thua trận này', effect: { capital: -10, legitimacy: 20, morale: -10, control: -5 } },
+      { label: 'Đàn áp toàn diện — chấm dứt một lần và mãi mãi', effect: { capital: -15, control: 20, legitimacy: -15, morale: 10 } }
     ]
   }
 ];
